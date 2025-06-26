@@ -13,7 +13,7 @@ public class Category {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="name", table="categories", insertable=true, updatable=true, nullable=false, unique = true, length = 50)
+    @Column(name="name", table="categories", nullable=false, unique = true, length = 50)
     private String name;
 
     @ManyToMany(mappedBy = "categories")

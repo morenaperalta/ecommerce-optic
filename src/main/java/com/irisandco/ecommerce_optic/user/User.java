@@ -7,17 +7,19 @@ import jakarta.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "username", table="users", insertable=true, updatable=true, nullable=false, columnDefinition = "VARCHAR(255) NOT NULL UNIQUE")
+    @Column(name = "username", table="users", nullable=false, unique = true, length = 50)
     private String username;
 
-    @Column(name = "email", table="users", insertable=true, updatable=true, nullable=false, columnDefinition = "VARCHAR(255) NOT NULL UNIQUE")
+    @Column(name = "email", table="users", nullable=false, unique = true, length = 50)
     private String email;
 
-    @Column(name = "password", table="users", insertable=true, updatable=true, nullable=false, columnDefinition = "VARCHAR(255) NOT NULL")
+    @Column(name = "password", table="users", nullable=false, length = 50)
     private String password;
+
+    public User() {
+    }
 
     public User(Long id, String username, String email, String password) {
         this.id = id;
