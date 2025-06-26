@@ -1,8 +1,11 @@
 package com.irisandco.ecommerce_optic.product;
 
+import com.irisandco.ecommerce_optic.category.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 public record ProductRequest(
         @NotBlank
@@ -11,6 +14,7 @@ public record ProductRequest(
         @Positive(message = "Price must be positive")
         Double price,
         String imageUrl,
-        Boolean featured
+        Boolean featured,
+        List<Category> categories
 ) {
 }
