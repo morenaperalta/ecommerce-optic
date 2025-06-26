@@ -1,5 +1,6 @@
 package com.irisandco.ecommerce_optic.category;
 
+import com.irisandco.ecommerce_optic.product.Product;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -10,17 +11,12 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="id_category")
     private Long id;
 
-    @Column(name="name", table="categories", insertable=true, updatable=true, nullable=false, columnDefinition = "VARCHAR(255) NOT NULL UNIQUE")
+    @Column(name="name", table="categories", nullable=false, unique = true, length = 50)
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name="category_product",
-            joinColumns = @JoinColumn(name="id_category"),
-            inverseJoinColumns = @JoinColumn(name="id_product"))
+    @ManyToMany(mappedBy = "categories")
     private List<Product> products;
 
     public Category(){}
