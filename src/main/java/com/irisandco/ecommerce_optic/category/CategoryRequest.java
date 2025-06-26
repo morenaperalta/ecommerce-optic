@@ -1,9 +1,11 @@
 package com.irisandco.ecommerce_optic.category;
 
-import org.springframework.lang.NonNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public record CategoryRequest(
-        @NonNull
+        @NotBlank
+        @Size(min = 2, max = 50, message = "Category name must contain min 2 and max 50 characters")
         String name
 ) {
 }
