@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 
 public record UserRequest (
         @NotBlank
-        @Size(min = 2, max = 50, message = "User must contain min 2 and max 50 characters")
+        @Size(min = 2, max = 50, message = "Username must contain min 2 and max 50 characters")
         String username,
         @NotBlank
         @Size(min = 2, max = 50, message = "Email must contain min 2 and max 50 characters")
