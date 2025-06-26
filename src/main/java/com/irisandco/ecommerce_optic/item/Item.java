@@ -12,7 +12,7 @@ public class Item {
     private Long id;
 
     @Column(name="quantity", table="items")
-    private int quantity;
+    private Integer quantity;
 
     @ManyToOne(targetEntity = Product.class)
     @JoinColumn(name="product_id")
