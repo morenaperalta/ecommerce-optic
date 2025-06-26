@@ -11,17 +11,17 @@ public class Category {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id_category")
-    Long id;
+    private Long id;
 
     @Column(name="name", table="categories", insertable=true, updatable=true, nullable=false, columnDefinition = "VARCHAR(255) NOT NULL UNIQUE")
-    String name;
+    private String name;
 
     @ManyToMany
     @JoinTable(
             name="category_product",
             joinColumns = @JoinColumn(name="id_category"),
             inverseJoinColumns = @JoinColumn(name="id_product"))
-    List<Product> products;
+    private List<Product> products;
 
     public Category(){}
 
