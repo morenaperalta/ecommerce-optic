@@ -11,26 +11,25 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="id_product")
     private Long  id;
 
-    @Column(name="name", table="products", insertable=true, updatable=true, nullable=false, columnDefinition = "VARCHAR(50) NOT NULL UNIQUE")
+    @Column(name="name", table="products", nullable=false,  unique = true, length = 50)
     private String name;
 
-    @Column(name="price", table="products", insertable=true, updatable=true, nullable=true, columnDefinition = "DOUBLE")
+    @Column(name="price", table="products")
     private Double price;
 
-    @Column(name="imageUrl", table="products", insertable=true, updatable=true, nullable=true, columnDefinition = "VARCHAR(50)")
+    @Column(name="imageUrl", table="products")
     private String imageUrl;
 
-    @Column(name="featured", table="products", insertable=true, updatable=true, nullable=true, columnDefinition = "BOOLEAN")
+    @Column(name="featured", table="products")
     private Boolean featured;
 
     @ManyToMany
     @JoinTable(
             name="category_product",
-            joinColumns = @JoinColumn(name="id_product"),
-            inverseJoinColumns = @JoinColumn(name="id_category"))
+            joinColumns = @JoinColumn(name="product_id"),
+            inverseJoinColumns = @JoinColumn(name="category_id"))
     private List<Category> categories;
 
     public Product() {
