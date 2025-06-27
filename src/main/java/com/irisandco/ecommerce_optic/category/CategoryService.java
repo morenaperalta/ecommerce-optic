@@ -24,12 +24,18 @@ public class CategoryService {
     }
 
     public CategoryResponseShort saveCategory(CategoryRequest categoryRequest){
+        if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
+            new IllegalArgumentException("There is already a category named " + categoryRequest.name());
+        }
         Category category = CategoryMapper.toEntity(categoryRequest);
         return CategoryMapper.toDtoShort(CATEGORY_REPOSITORY.save(category));
     }
 
     public CategoryResponseShort updateCategory(Long id, CategoryRequest categoryRequest){
         Category category = getById(id);
+        if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
+            new IllegalArgumentException("There is already a category named " + categoryRequest.name());
+        }
         category.setName(categoryRequest.name());
         return CategoryMapper.toDtoShort(CATEGORY_REPOSITORY.save(category));
     }
