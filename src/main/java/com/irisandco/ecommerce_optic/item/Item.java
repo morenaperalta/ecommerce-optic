@@ -1,6 +1,7 @@
 package com.irisandco.ecommerce_optic.item;
 
 import com.irisandco.ecommerce_optic.product.Product;
+import com.irisandco.ecommerce_optic.cart.Cart;
 import jakarta.persistence.*;
 
 @Entity

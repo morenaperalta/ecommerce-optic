@@ -1,5 +1,6 @@
 package com.irisandco.ecommerce_optic.user;
 
+import com.irisandco.ecommerce_optic.cart.Cart;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +18,9 @@ public class User {
 
     @Column(name = "password", table="users", nullable=false, length = 50)
     private String password;
+
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
 
     public User() {
     }
