@@ -15,7 +15,7 @@ public class Cart {
     private Long id;
 
     @OneToOne(targetEntity = User.class)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "cart")
