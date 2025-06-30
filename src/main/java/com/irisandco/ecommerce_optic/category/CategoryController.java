@@ -18,7 +18,7 @@ public class CategoryController {
 
     @GetMapping("")
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
-        return ResponseEntity.ok(CATEGORY_SERVICE.getAll());
+        return ResponseEntity.ok(CATEGORY_SERVICE.getAllCategories());
     }
 
     @PostMapping("")

@@ -14,11 +14,11 @@ public class CategoryService {
         CATEGORY_REPOSITORY = categoryRepository;
     }
 
-    public List<CategoryResponse> getAll(){
+    public List<CategoryResponse> getAllCategories(){
         return listToDto(CATEGORY_REPOSITORY.findAll());
     }
 
-    public Category getById(Long id){
+    public Category getCategoryById(Long id){
         return CATEGORY_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
     }
@@ -32,7 +32,7 @@ public class CategoryService {
     }
 
     public CategoryResponseShort updateCategory(Long id, CategoryRequest categoryRequest){
-        Category category = getById(id);
+        Category category = getCategoryById(id);
         if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
             new IllegalArgumentException("There is already a category named " + categoryRequest.name());
         }
@@ -41,7 +41,7 @@ public class CategoryService {
     }
 
     public void deleteCategory(Long id){
-        Category category = getById(id);
+        Category category = getCategoryById(id);
         CATEGORY_REPOSITORY.deleteById(id);
     }
 
