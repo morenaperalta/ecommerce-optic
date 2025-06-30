@@ -16,6 +16,6 @@ public record ProductRequest(
         Double price,
         String imageUrl,
         Boolean featured,
-        List<CategoryRequest> categories
+        List<Long> categoryIds
 ) {
 }
