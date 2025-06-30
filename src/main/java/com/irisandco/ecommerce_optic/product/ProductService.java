@@ -21,7 +21,8 @@ public class ProductService {
     }
 
     private ProductResponse toDto(Product product) {
-        List<CategoryResponseShort> shortCategories = product.getCategories().stream().map(category -> CategoryMapper.toDtoShort(category)).toList();
+       List<CategoryResponseShort> shortCategories = product.getCategories().stream().map(category -> CategoryMapper.toDtoShort(category)).toList();
+
         return ProductMapper.toDto(product, shortCategories);
     }
 
@@ -59,7 +60,33 @@ public class ProductService {
         return ProductMapper.toDto(savedProduct,shortCategories);
     }
 
+    public void deleteProduct(Long id) {
+        //Verify if the id product exist or throw an exception
+        Product product = getProductById(id);
+        PRODUCT_REPOSITORY.deleteById(id);
+    }
 
+    public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
+    Product product =getProductById(id);
+    if (PRODUCT_REPOSITORY.existsByName(productRequest.name())) { new IllegalArgumentException("There is already a product named " + productRequest.name());
+    }
+    product.setName(productRequest.name());
+    product.setPrice(productRequest.price());
+    product.setImageUrl(productRequest.imageUrl());
+    product.setFeatured(productRequest.featured());
+
+    List<Category> categories = productRequest.categoryIds().stream().map(categoryId -> CATEGORY_SERVICE.getById(id)).toList();
+
+    product.setCategories(categories);
+
+    // Guardar product
+    Product savedProduct = PRODUCT_REPOSITORY.save(product);
+
+    // Mapear categorías para la respuesta
+    List<CategoryResponseShort> shortCategories = categories.stream().map(category -> CategoryMapper.toDtoShort(category)).toList();
+
+    return ProductMapper.toDto(savedProduct, shortCategories);
+    }
     }
 
 
