@@ -1,43 +1,67 @@
 package com.irisandco.ecommerce_optic.product;
 
-import com.irisandco.ecommerce_optic.category.Category;
-import com.irisandco.ecommerce_optic.category.CategoryMapper;
-import com.irisandco.ecommerce_optic.category.CategoryResponseShort;
+import com.irisandco.ecommerce_optic.category.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
 
     private final ProductRepository PRODUCT_REPOSITORY;
+    private final CategoryService CATEGORY_SERVICE;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
         this.PRODUCT_REPOSITORY = productRepository;
+        this.CATEGORY_SERVICE = categoryService;
     }
 
     public List<ProductResponse> getAllProducts() {
-        List<Product> products = PRODUCT_REPOSITORY.findAll();
+        return listToDto(PRODUCT_REPOSITORY.findAll());
+    }
 
-        return products.stream()
-                .map(product -> {
-                    // 1. Obtener las categorías del producto
-                    List<Category> productCategories = product.getCategories();
+    private ProductResponse toDto(Product product) {
+        List<CategoryResponseShort> shortCategories = product.getCategories().stream().map(category -> CategoryMapper.toDtoShort(category)).toList();
+        return ProductMapper.toDto(product, shortCategories);
+    }
 
-                    // 2. Convertirlas en CategoryResponseShort usando el mapper
-                    List<CategoryResponseShort> shortCategories = productCategories.stream()
-                            .map(category -> CategoryMapper.toDtoShort(category)
-)
-                            .collect(Collectors.toList());
+    private List<ProductResponse> listToDto(List<Product> products) {
+        return products.stream().map(product ->  this.toDto(product))
+                .toList();
+        }
 
-                    // 3. Crear el DTO final con el producto y sus categorías resumidas
-                    return ProductMapper.toDto(product, shortCategories);
-                })
-                .collect(Collectors.toList());
+    public Product getProductById(Long id) {
+        return PRODUCT_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("Product not found"));
+    }
+
+    public ProductResponse getProductResponseById(Long id) {
+        return toDto(getProductById(id));
+    }
+
+    public ProductResponse saveProduct (ProductRequest productRequest) {
+        if (PRODUCT_REPOSITORY.existsByName(productRequest.name())) {
+            new IllegalArgumentException("There is already a product named " + productRequest.name());
+        }
+
+        //Obtener categorías por sus id
+        List<Category> categories = productRequest.categoryIds().stream().map(id -> CATEGORY_SERVICE.getById(id)).toList();
+
+        // Convertir el DTO a entidad con las categorías ya cargadas
+        Product product = ProductMapper.toEntity(productRequest, categories);
+
+        // Guardar producto
+        Product savedProduct = PRODUCT_REPOSITORY.save(product);
+
+        // Mapear categorías para la respuesta
+        List<CategoryResponseShort> shortCategories = categories.stream().map(category -> CategoryMapper.toDtoShort(category)).toList();
+
+        // Devolver el DTO con las categorías incluidas
+        return ProductMapper.toDto(savedProduct,shortCategories);
+    }
+
+
     }
 
 
 
 
-}
