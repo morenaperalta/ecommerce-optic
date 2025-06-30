@@ -30,8 +30,10 @@ public class UserService {
 
     public UserResponse updateUser(Long id, UserRequest userRequest){
         User user = getUserById(id);
-        if (USER_REPOSITORY.existsByUsername(userRequest.username())){
-            throw new IllegalArgumentException("Username is not available, please choose another one");
+        if(user.getUsername() != userRequest.username()){
+            if (USER_REPOSITORY.existsByUsername(userRequest.username())){
+                throw new IllegalArgumentException("Username is not available, please choose another one");
+            }
         }
 
         user.setUsername(userRequest.username());
