@@ -16,8 +16,13 @@ public class UserService {
         return listToDto(USER_REPOSITORY.findAll());
     }
 
-    public User getUserById(Long id){
+    private User getUserById(Long id){
         return USER_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public UserResponse getUserResponseById(Long id){
+        User user = getUserById(id);
+        return UserMapper.toDto(user);
     }
 
     public UserResponse saveUser(UserRequest userRequest){
