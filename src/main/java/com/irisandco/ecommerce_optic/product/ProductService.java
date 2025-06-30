@@ -39,7 +39,7 @@ public class ProductService {
         return toDto(getProductById(id));
     }
 
-    public ProductResponse saveProduct (ProductRequest productRequest) {
+    public ProductResponse createProduct (ProductRequest productRequest) {
         if (PRODUCT_REPOSITORY.existsByName(productRequest.name())) {
             new IllegalArgumentException("There is already a product named " + productRequest.name());
         }
