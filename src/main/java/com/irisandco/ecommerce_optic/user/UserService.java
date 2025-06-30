@@ -20,18 +20,18 @@ public class UserService {
         return USER_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-    private UserResponse saveUser(UserRequest userRequest){
-        if (USER_REPOSITORY.existByUsername(userRequest.username())){
-            new IllegalArgumentException("Username is not available, please choose another one");
+    public UserResponse saveUser(UserRequest userRequest){
+        if (USER_REPOSITORY.existsByUsername(userRequest.username())) {
+            throw new IllegalArgumentException("Username is not available, please choose another one");
         }
         User user = UserMapper.toEntity(userRequest);
-        return UserMapper.toDto((USER_REPOSITORY.save(user)));
+        return UserMapper.toDto(USER_REPOSITORY.save(user));
     }
 
     public UserResponse updateUser(Long id, UserRequest userRequest){
         User user = getUserById(id);
-        if (USER_REPOSITORY.existByUsername(userRequest.username())){
-            new IllegalArgumentException("Username is not available, please choose another one");
+        if (USER_REPOSITORY.existsByUsername(userRequest.username())){
+            throw new IllegalArgumentException("Username is not available, please choose another one");
         }
 
         user.setUsername(userRequest.username());
@@ -51,5 +51,4 @@ public class UserService {
                 .map(UserMapper::toDto)
                 .toList();
     }
-
 }
