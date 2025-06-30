@@ -2,6 +2,7 @@ package com.irisandco.ecommerce_optic.category;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,21 +23,21 @@ public class CategoryController {
     }
 
     @PostMapping("")
-    public ResponseEntity<CategoryResponseShort> createCategory(@RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<CategoryResponseShort> createCategory(@Validated @RequestBody CategoryRequest categoryRequest) {
         CategoryResponseShort categoryResponseShort= CATEGORY_SERVICE.saveCategory(categoryRequest);
         return new ResponseEntity<>(categoryResponseShort, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponseShort> updateCategory(@PathVariable Long id, @RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<CategoryResponseShort> updateCategory(@PathVariable Long id, @Validated @RequestBody CategoryRequest categoryRequest) {
         CategoryResponseShort categoryResponseShort= CATEGORY_SERVICE.saveCategory(categoryRequest);
         return new ResponseEntity<>(categoryResponseShort, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity deleteCategory(@PathVariable Long id) {
         CATEGORY_SERVICE.deleteCategory(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
 }
