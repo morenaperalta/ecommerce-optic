@@ -1,6 +1,7 @@
 package com.irisandco.ecommerce_optic.cart;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +19,7 @@ public class CartController {
     }
 
     @PostMapping("/{userId}/add/{productId}")
-    public ResponseEntity<Object> addItemToCart(@PathVariable Long userId, @PathVariable Long productId, @RequestBody CartRequest cartRequest){
+    public ResponseEntity<Object> addItemToCart(@PathVariable Long userId, @PathVariable Long productId, @Validated @RequestBody CartRequest cartRequest){
         CART_SERVICE.addItemToCart(userId, productId, cartRequest);
         return ResponseEntity.ok().body("New product added to cart");
 
