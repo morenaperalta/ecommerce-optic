@@ -23,7 +23,7 @@ public class CategoryService {
     }
 
     public Category getCategoryByName(String name){
-        return CATEGORY_REPOSITORY.findCategoryByName(name).orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        return CATEGORY_REPOSITORY.findCategoryByNameIgnoreCase(name).orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 
     public CategoryResponseShort saveCategory(CategoryRequest categoryRequest){
