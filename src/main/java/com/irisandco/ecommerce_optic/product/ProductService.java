@@ -3,6 +3,7 @@ package com.irisandco.ecommerce_optic.product;
 import com.irisandco.ecommerce_optic.category.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,7 +40,7 @@ public class ProductService {
         }
 
         //Obtener categorías por sus nombres
-        List<Category> categories = productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList();
+        List<Category> categories = new ArrayList<>(productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList());
 
         // Convertir el DTO a entidad con las categorías ya cargadas
         Product product = ProductMapper.toEntity(productRequest, categories);
@@ -73,7 +74,7 @@ public class ProductService {
         product.setFeatured(productRequest.featured());
     }
 
-    List<Category> categories = productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList();
+    List<Category> categories = new ArrayList<>(productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList());
 
     product.setCategories(categories);
 
