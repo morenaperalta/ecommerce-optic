@@ -1,8 +1,8 @@
 package com.irisandco.ecommerce_optic.product;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,12 +29,12 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ProductResponse> createProduct(@Validated @RequestBody ProductRequest productRequest) { ProductResponse createdProduct = PRODUCT_SERVICE.createProduct(productRequest);
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest productRequest) { ProductResponse createdProduct = PRODUCT_SERVICE.createProduct(productRequest);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @Validated @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest productRequest) {
         ProductResponse updatedProduct = PRODUCT_SERVICE.updateProduct(id, productRequest);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
