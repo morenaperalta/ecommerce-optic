@@ -1,7 +1,5 @@
 package com.irisandco.ecommerce_optic.product;
 
-import com.irisandco.ecommerce_optic.category.Category;
-import com.irisandco.ecommerce_optic.category.CategoryRequest;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -18,6 +16,6 @@ public record ProductRequest(
         Double price,
         String imageUrl,
         Boolean featured,
-        List<Long> categoryIds
+        List<String> categoryNames
 ) {
 }
