@@ -1,6 +1,7 @@
 package com.irisandco.ecommerce_optic.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +13,10 @@ public class ErrorResponse {
     private final String message;
     private final String path;
 
-    public ErrorResponse(int status, String error, String message, String path) {
+    public ErrorResponse(HttpStatus status, String message, String path) {
         this.timestamp = LocalDateTime.now();
-        this.status = status;
-        this.error = error;
+        this.status = status.value();
+        this.error = status.name();
         this.message = message;
         this.path = path;
     }
