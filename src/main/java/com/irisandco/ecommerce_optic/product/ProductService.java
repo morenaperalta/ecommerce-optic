@@ -20,14 +20,8 @@ public class ProductService {
         return listToDto(PRODUCT_REPOSITORY.findAll());
     }
 
-    private ProductResponse toDto(Product product) {
-       List<CategoryResponseShort> shortCategories = product.getCategories().stream().map(category -> CategoryMapper.toDtoShort(category)).toList();
-
-        return ProductMapper.toDto(product, shortCategories);
-    }
-
     private List<ProductResponse> listToDto(List<Product> products) {
-        return products.stream().map(product ->  this.toDto(product))
+        return products.stream().map(product ->  ProductMapper.toDto(product))
                 .toList();
         }
 
@@ -36,7 +30,7 @@ public class ProductService {
     }
 
     public ProductResponse getProductResponseById(Long id) {
-        return toDto(getProductById(id));
+        return ProductMapper.toDto(getProductById(id));
     }
 
     public ProductResponse createProduct (ProductRequest productRequest) {
@@ -53,11 +47,8 @@ public class ProductService {
         // Guardar producto
         Product savedProduct = PRODUCT_REPOSITORY.save(product);
 
-        // Mapear categorías para la respuesta
-        List<CategoryResponseShort> shortCategories = categories.stream().map(category -> CategoryMapper.toDtoShort(category)).toList();
-
         // Devolver el DTO con las categorías incluidas
-        return ProductMapper.toDto(savedProduct,shortCategories);
+        return ProductMapper.toDto(savedProduct);
     }
 
     public void deleteProduct(Long id) {
@@ -82,10 +73,7 @@ public class ProductService {
     // Guardar product
     Product savedProduct = PRODUCT_REPOSITORY.save(product);
 
-    // Mapear categorías para la respuesta
-    List<CategoryResponseShort> shortCategories = categories.stream().map(category -> CategoryMapper.toDtoShort(category)).toList();
-
-    return ProductMapper.toDto(savedProduct, shortCategories);
+    return ProductMapper.toDto(savedProduct);
     }
     }
 
