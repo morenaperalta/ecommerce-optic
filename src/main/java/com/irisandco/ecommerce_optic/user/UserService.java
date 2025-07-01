@@ -16,7 +16,7 @@ public class UserService {
         return listToDto(USER_REPOSITORY.findAll());
     }
 
-    private User getUserById(Long id){
+    public User getUserById(Long id){
         return USER_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
