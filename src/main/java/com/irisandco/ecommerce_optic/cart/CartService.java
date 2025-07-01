@@ -39,7 +39,7 @@ public class CartService {
     }
 
     public CartResponse getCartResponseByUserId(Long id){
-        return toDto(getCartByUserId(id));
+        return CartMapper.toDto(getCartByUserId(id));
 
     }
 
@@ -85,7 +85,7 @@ public class CartService {
             itemsResponse = Collections.singletonList(ItemMapper.toDto(newItem, product));
         }
         updateCartPrice(cart);
-        CartMapper.toDto(CART_REPOSITORY.save(cart), itemsResponse);
+        CartMapper.toDto(CART_REPOSITORY.save(cart));
     }
 
     public void removeItemFromCart(Long userId, Long productId) {
@@ -105,7 +105,7 @@ public class CartService {
                 .toList();
 
         updateCartPrice(cart);
-        CartMapper.toDto(CART_REPOSITORY.save(cart), itemsResponse);
+        CartMapper.toDto(CART_REPOSITORY.save(cart));
     }
 
 //    public void deleteCart(Long id){
@@ -119,12 +119,6 @@ public class CartService {
 //                .toList();
 //    }
 
-    private CartResponse toDto(Cart cart) {
-        List <ItemResponse> itemsResponse = cart.getItems().stream()
-                .map((item) -> ItemMapper.toDto(item, item.getProduct()))
-                .toList();
-        return CartMapper.toDto(cart, itemsResponse);
-    }
 
     private void updateCartPrice(Cart cart){
         double totalPrice = cart.getItems().stream()
