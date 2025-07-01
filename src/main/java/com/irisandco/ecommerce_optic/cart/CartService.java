@@ -72,9 +72,9 @@ public class CartService {
                     .map((item) -> {
                                 if (Objects.equals(product.getId(), item.getProduct().getId())) {
                                     ITEM_SERVICE.updateItem(item, cartRequest.quantity()) ;
-                                    return ItemMapper.toDto(item, product);
+                                    return ItemMapper.toDto(item);
                                 } else {
-                                    return ItemMapper.toDto(item, item.getProduct());
+                                    return ItemMapper.toDto(item);
                                 }
                             }
                     ).toList();
@@ -82,7 +82,7 @@ public class CartService {
             Item newItem = new Item(cartRequest.quantity(), product, cart);
             ITEM_SERVICE.createItem(newItem);
             cart.getItems().add(newItem);
-            itemsResponse = Collections.singletonList(ItemMapper.toDto(newItem, product));
+            itemsResponse = Collections.singletonList(ItemMapper.toDto(newItem));
         }
         updateCartPrice(cart);
         CartMapper.toDto(CART_REPOSITORY.save(cart));
@@ -101,7 +101,7 @@ public class CartService {
         ITEM_SERVICE.deleteItemById(itemToRemove.getId());
 
         List<ItemResponse> itemsResponse = cart.getItems().stream()
-                .map((item) -> ItemMapper.toDto(item, product))
+                .map((item) -> ItemMapper.toDto(item))
                 .toList();
 
         updateCartPrice(cart);
