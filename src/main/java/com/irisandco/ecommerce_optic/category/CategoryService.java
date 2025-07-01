@@ -20,7 +20,10 @@ public class CategoryService {
 
     public Category getCategoryById(Long id){
         return CATEGORY_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("Category not found"));
+    }
 
+    public Category getCategoryByName(String name){
+        return CATEGORY_REPOSITORY.findCategoryByName(name).orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 
     public CategoryResponseShort saveCategory(CategoryRequest categoryRequest){
