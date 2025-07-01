@@ -3,6 +3,7 @@ package com.irisandco.ecommerce_optic.category;
 import com.irisandco.ecommerce_optic.product.Product;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories")
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
     public Category(){}
 
