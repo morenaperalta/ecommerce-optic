@@ -4,6 +4,7 @@ import com.irisandco.ecommerce_optic.item.Item;
 import com.irisandco.ecommerce_optic.user.User;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,25 +20,12 @@ public class Cart {
     private User user;
 
     @OneToMany(mappedBy = "cart")
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
 
     @Column(name = "totalPrice", table ="carts")
     private Double totalPrice;
 
     public Cart(){}
-
-    public Cart(User user, List<Item> items, Double totalPrice) {
-        this.user = user;
-        this.items = items;
-        this.totalPrice = totalPrice;
-    }
-
-    public Cart(Long id, User user, List<Item> items, Double totalPrice) {
-        this.id = id;
-        this.user = user;
-        this.items = items;
-        this.totalPrice = totalPrice;
-    }
 
     public Long getId() {
         return id;
