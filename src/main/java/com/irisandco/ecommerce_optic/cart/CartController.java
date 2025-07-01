@@ -25,7 +25,7 @@ public class CartController {
 
     }
 
-    @DeleteMapping("/api/cart/{userId}/remove/{productId}")
+    @DeleteMapping("/{userId}/remove/{productId}")
     public ResponseEntity<Object> removeItemFromCart(@PathVariable Long userId, @PathVariable Long productId){
         CART_SERVICE.removeItemFromCart(userId, productId);
         return ResponseEntity.ok().body("Product deleted from cart");
