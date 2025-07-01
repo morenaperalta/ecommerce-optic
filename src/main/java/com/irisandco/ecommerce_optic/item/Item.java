@@ -12,15 +12,15 @@ public class Item {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="quantity", table="items")
+    @Column(name="quantity", table="items", nullable = false)
     private Integer quantity;
 
     @ManyToOne(targetEntity = Product.class)
-    @JoinColumn(name="product_id")
+    @JoinColumn(name="product_id", nullable = false)
     private Product product;
 
     @ManyToOne(targetEntity = Cart.class)
-    @JoinColumn(name="cart_id")
+    @JoinColumn(name="cart_id", nullable = false)
     private Cart cart;
 
     public Item() {
