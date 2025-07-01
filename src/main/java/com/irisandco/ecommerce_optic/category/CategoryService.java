@@ -28,7 +28,7 @@ public class CategoryService {
 
     public CategoryResponseShort saveCategory(CategoryRequest categoryRequest){
         if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
-            new IllegalArgumentException("There is already a category named " + categoryRequest.name());
+            throw new IllegalArgumentException("There is already a category named " + categoryRequest.name());
         }
         Category category = CategoryMapper.toEntity(categoryRequest);
         return CategoryMapper.toDtoShort(CATEGORY_REPOSITORY.save(category));
@@ -36,24 +36,19 @@ public class CategoryService {
 
     public CategoryResponseShort updateCategory(Long id, CategoryRequest categoryRequest){
         Category category = getCategoryById(id);
-        if(!category.getName().equals(categoryRequest.name())) {
-            if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
-                new IllegalArgumentException("There is already a category named " + categoryRequest.name());
+        String newName = categoryRequest.name().trim();
+        if(!category.getName().equals(newName)) {
+            if (CATEGORY_REPOSITORY.existsByName(newName)) {
+                throw new IllegalArgumentException("There is already a category named " + categoryRequest.name());
             }
         }
-        category.setName(categoryRequest.name());
+        category.setName(newName);
         return CategoryMapper.toDtoShort(CATEGORY_REPOSITORY.save(category));
     }
 
     public void deleteCategory(Long id){
-        Category category = getCategoryById(id);
+        getCategoryById(id);
         CATEGORY_REPOSITORY.deleteById(id);
-    }
-
-    private List<CategoryResponseShort> listToDtoShort(List<Category> categories) {
-        return categories.stream()
-                .map(CategoryMapper::toDtoShort)
-                .toList();
     }
 
     private List<CategoryResponse> listToDto(List<Category> categories) {
