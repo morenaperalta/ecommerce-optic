@@ -36,8 +36,10 @@ public class CategoryService {
 
     public CategoryResponseShort updateCategory(Long id, CategoryRequest categoryRequest){
         Category category = getCategoryById(id);
-        if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
-            new IllegalArgumentException("There is already a category named " + categoryRequest.name());
+        if(!category.getName().equals(categoryRequest.name())) {
+            if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
+                new IllegalArgumentException("There is already a category named " + categoryRequest.name());
+            }
         }
         category.setName(categoryRequest.name());
         return CategoryMapper.toDtoShort(CATEGORY_REPOSITORY.save(category));
