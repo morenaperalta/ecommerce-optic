@@ -1,8 +1,6 @@
 package com.irisandco.ecommerce_optic.cart;
 
 import com.irisandco.ecommerce_optic.item.Item;
-import com.irisandco.ecommerce_optic.item.ItemMapper;
-import com.irisandco.ecommerce_optic.item.ItemResponse;
 import com.irisandco.ecommerce_optic.item.ItemService;
 import com.irisandco.ecommerce_optic.product.Product;
 import com.irisandco.ecommerce_optic.product.ProductService;
@@ -10,7 +8,6 @@ import com.irisandco.ecommerce_optic.user.User;
 import com.irisandco.ecommerce_optic.user.UserService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -56,7 +53,7 @@ public class CartService {
         int quantity = (cartRequest.quantity() != null) ? cartRequest.quantity() : 1;
 
         cart.getItems().stream()
-                .filter(item -> Objects.equals(product, item.getProduct()))
+                .filter(item -> Objects.equals(product.getId(), item.getProduct().getId()))
                 .findFirst()
                 .ifPresentOrElse(
                         item -> ITEM_SERVICE.updateItem(item, quantity),
@@ -66,50 +63,27 @@ public class CartService {
                         }
                 );
 
-
-//        if (!cart.getItems().isEmpty()) {
-//            boolean itemUpdatedOrAdded = cart.getItems().stream()
-//                    .anyMatch(item -> {
-//                        if (Objects.equals(product, item.getProduct())) {
-//                            ITEM_SERVICE.updateItem(item, cartRequest.quantity());
-//                            return true; // Found and updated the existing item
-//                        }
-//                        return false; // Not the matching item
-//                    });
-//
-//            // If no existing item matched, create a new one
-//            if (!itemUpdatedOrAdded) {
-//                Item newItem = new Item(cartRequest.quantity(), product, cart);
-//                ITEM_SERVICE.createItem(newItem);
-//            }
-//        } else {
-//            // Cart is empty, just add a new item
-//            Item newItem = new Item(cartRequest.quantity(), product, cart);
-//            ITEM_SERVICE.createItem(newItem);
-//        }
-
         updateCartPrice(cart);
         CartMapper.toDto(CART_REPOSITORY.save(cart));
     }
 
     public void removeItemFromCart(Long userId, Long productId) {
-        Cart cart = getCartByUserId(userId);
+        Cart cart = getCartOrCreateByUserId(userId);
         Product product = PRODUCT_SERVICE.getProductById(productId);
-
-        Item itemToRemove = cart.getItems().stream()
-                .filter((item) -> item.getProduct() == product)
+        cart.getItems().stream()
+                .filter(item -> Objects.equals(item.getProduct().getId(), product.getId()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Product not found in this cart"));
+                .ifPresentOrElse((itemToRemove) -> {
+                        cart.getItems().remove(itemToRemove);
+                        ITEM_SERVICE.deleteItemById(itemToRemove.getId());
+                        },
+                        () -> {
+                            throw new IllegalArgumentException("Product not found in this cart");
+                        }
+                );
 
-        cart.getItems().remove(itemToRemove);
-        ITEM_SERVICE.deleteItemById(itemToRemove.getId());
-
-        List<ItemResponse> itemsResponse = cart.getItems().stream()
-                .map((item) -> ItemMapper.toDto(item))
-                .toList();
-
-        updateCartPrice(cart);
-        CartMapper.toDto(CART_REPOSITORY.save(cart));
+            updateCartPrice(cart);
+            CartMapper.toDto(CART_REPOSITORY.save(cart));
     }
 
     private void updateCartPrice(Cart cartToUpdate){
