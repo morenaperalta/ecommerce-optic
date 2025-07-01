@@ -45,7 +45,7 @@ public class ProductService {
         }
 
         //Obtener categorías por sus id
-        List<Category> categories = productRequest.categoryIds().stream().map(id -> CATEGORY_SERVICE.getCategoryById(id)).toList();
+        List<Category> categories = productRequest.categoryNames().stream().map(id -> CATEGORY_SERVICE.getCategoryById(id)).toList();
 
         // Convertir el DTO a entidad con las categorías ya cargadas
         Product product = ProductMapper.toEntity(productRequest, categories);
@@ -75,7 +75,7 @@ public class ProductService {
     product.setImageUrl(productRequest.imageUrl());
     product.setFeatured(productRequest.featured());
 
-    List<Category> categories = productRequest.categoryIds().stream().map(categoryId -> CATEGORY_SERVICE.getCategoryById(id)).toList();
+    List<Category> categories = productRequest.categoryNames().stream().map(categoryId -> CATEGORY_SERVICE.getCategoryById(id)).toList();
 
     product.setCategories(categories);
 
