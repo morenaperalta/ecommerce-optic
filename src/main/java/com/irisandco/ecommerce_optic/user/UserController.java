@@ -1,8 +1,8 @@
 package com.irisandco.ecommerce_optic.user;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,13 +29,13 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserResponse> createUser(@Validated @RequestBody UserRequest userRequest){
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest){
         UserResponse userResponse = USER_SERVICE.saveUser(userRequest);
         return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Validated @RequestBody UserRequest userRequest){
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest){
         UserResponse userResponse = USER_SERVICE.updateUser(id, userRequest);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
