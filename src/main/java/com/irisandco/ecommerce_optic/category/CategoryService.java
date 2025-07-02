@@ -1,7 +1,5 @@
 package com.irisandco.ecommerce_optic.category;
 
-import com.irisandco.ecommerce_optic.product.ProductMapper;
-import com.irisandco.ecommerce_optic.product.ProductResponseShort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +25,7 @@ public class CategoryService {
     }
 
     public CategoryResponseShort saveCategory(CategoryRequest categoryRequest){
-        if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
+        if (CATEGORY_REPOSITORY.existsByNameIgnoreCase(categoryRequest.name())) {
             throw new IllegalArgumentException("There is already a category named " + categoryRequest.name());
         }
         Category category = CategoryMapper.toEntity(categoryRequest);
@@ -38,7 +36,7 @@ public class CategoryService {
         Category category = getCategoryById(id);
         String newName = categoryRequest.name().trim();
         if(!category.getName().equals(newName)) {
-            if (CATEGORY_REPOSITORY.existsByName(newName)) {
+            if (CATEGORY_REPOSITORY.existsByNameIgnoreCase(newName)) {
                 throw new IllegalArgumentException("There is already a category named " + categoryRequest.name());
             }
         }
