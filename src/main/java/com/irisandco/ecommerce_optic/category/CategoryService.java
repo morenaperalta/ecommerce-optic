@@ -1,7 +1,7 @@
 package com.irisandco.ecommerce_optic.category;
 
-import com.irisandco.ecommerce_optic.product.ProductMapper;
-import com.irisandco.ecommerce_optic.product.ProductResponseShort;
+import com.irisandco.ecommerce_optic.exception.EntityAlreadyExistsException;
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,16 +19,16 @@ public class CategoryService {
     }
 
     public Category getCategoryById(Long id){
-        return CATEGORY_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        return CATEGORY_REPOSITORY.findById(id).orElseThrow(() -> new EntityNotFoundException(Category.class.getSimpleName(), "id", id.toString()));
     }
 
     public Category getCategoryByName(String name){
-        return CATEGORY_REPOSITORY.findCategoryByName(name).orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        return CATEGORY_REPOSITORY.findCategoryByNameIgnoreCase(name).orElseThrow(() -> new EntityNotFoundException(Category.class.getSimpleName(), "name", name));
     }
 
     public CategoryResponseShort saveCategory(CategoryRequest categoryRequest){
-        if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
-            new IllegalArgumentException("There is already a category named " + categoryRequest.name());
+        if (CATEGORY_REPOSITORY.existsByNameIgnoreCase(categoryRequest.name())) {
+            throw new EntityAlreadyExistsException(Category.class.getSimpleName(), "name", categoryRequest.name());
         }
         Category category = CategoryMapper.toEntity(categoryRequest);
         return CategoryMapper.toDtoShort(CATEGORY_REPOSITORY.save(category));
@@ -36,32 +36,24 @@ public class CategoryService {
 
     public CategoryResponseShort updateCategory(Long id, CategoryRequest categoryRequest){
         Category category = getCategoryById(id);
-        if (CATEGORY_REPOSITORY.existsByName(categoryRequest.name())) {
-            new IllegalArgumentException("There is already a category named " + categoryRequest.name());
+        String newName = categoryRequest.name().trim();
+        if(!category.getName().equals(newName)) {
+            if (CATEGORY_REPOSITORY.existsByNameIgnoreCase(newName)) {
+                throw new EntityAlreadyExistsException(Category.class.getSimpleName(), "name", categoryRequest.name());
+            }
         }
-        category.setName(categoryRequest.name());
+        category.setName(newName);
         return CategoryMapper.toDtoShort(CATEGORY_REPOSITORY.save(category));
     }
 
     public void deleteCategory(Long id){
-        Category category = getCategoryById(id);
+        getCategoryById(id);
         CATEGORY_REPOSITORY.deleteById(id);
-    }
-
-    private List<CategoryResponseShort> listToDtoShort(List<Category> categories) {
-        return categories.stream()
-                .map(CategoryMapper::toDtoShort)
-                .toList();
     }
 
     private List<CategoryResponse> listToDto(List<Category> categories) {
         return categories.stream()
-                .map( (category) -> {
-                                List <ProductResponseShort> productResponseShort = category.getProducts().stream()
-                                                    .map(ProductMapper::toDtoShort)
-                                                    .toList();
-                                return CategoryMapper.toDto(category, productResponseShort);
-                })
+                .map( CategoryMapper::toDto)
                 .toList();
     }
 }

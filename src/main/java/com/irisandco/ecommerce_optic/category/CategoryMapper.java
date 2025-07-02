@@ -1,21 +1,19 @@
 package com.irisandco.ecommerce_optic.category;
 
+import com.irisandco.ecommerce_optic.product.ProductMapper;
 import com.irisandco.ecommerce_optic.product.ProductResponseShort;
 
 import java.util.List;
 
 public class CategoryMapper {
     public static Category toEntity(CategoryRequest categoryRequest){
-        return new Category(categoryRequest.name());
+        return new Category(categoryRequest.name().trim());
     }
 
-//    public static Category toEntity(CategoryRequest categoryRequest){
-//        Category category = new Category();
-//        category.setName(categoryRequest.name());
-//        return category;
-//    }
-
-    public static CategoryResponse toDto(Category category, List<ProductResponseShort> products){
+    public static CategoryResponse toDto(Category category){
+        List<ProductResponseShort> products = category.getProducts().stream()
+                            .map(ProductMapper::toDtoShort)
+                            .toList();
         return new CategoryResponse(category.getId(), category.getName(), products);
     }
 

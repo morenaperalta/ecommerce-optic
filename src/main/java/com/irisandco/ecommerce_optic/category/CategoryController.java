@@ -19,7 +19,8 @@ public class CategoryController {
 
     @GetMapping("")
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
-        return ResponseEntity.ok(CATEGORY_SERVICE.getAllCategories());
+        List<CategoryResponse> categoryResponseList = CATEGORY_SERVICE.getAllCategories();
+        return new ResponseEntity<>(categoryResponseList, HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -30,14 +31,14 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponseShort> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequest categoryRequest) {
-        CategoryResponseShort categoryResponseShort= CATEGORY_SERVICE.saveCategory(categoryRequest);
-        return new ResponseEntity<>(categoryResponseShort, HttpStatus.CREATED);
+        CategoryResponseShort categoryResponseShort= CATEGORY_SERVICE.updateCategory(id, categoryRequest);
+        return new ResponseEntity<>(categoryResponseShort, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
         CATEGORY_SERVICE.deleteCategory(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>( "Category deleted successfully", HttpStatus.OK);
     }
 
 }

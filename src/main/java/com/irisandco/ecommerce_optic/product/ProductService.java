@@ -60,6 +60,7 @@ public class ProductService {
 
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
     Product product = getProductById(id);
+
     String name = productRequest.name().trim();
     if (!product.getName().equalsIgnoreCase(name)) {
             if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(name)) { throw new IllegalArgumentException("There is already a product named " + name);
