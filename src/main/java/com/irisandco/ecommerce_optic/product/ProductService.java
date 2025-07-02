@@ -35,12 +35,12 @@ public class ProductService {
     }
 
     public ProductResponse createProduct (ProductRequest productRequest) {
-        if (PRODUCT_REPOSITORY.existsByName(productRequest.name())) {
+        if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(productRequest.name())) {
             new IllegalArgumentException("There is already a product named " + productRequest.name());
         }
 
         //Obtener categorías por sus nombres
-        List<Category> categories = new ArrayList<>(productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList());
+        List<Category> categories = productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList();
 
         // Convertir el DTO a entidad con las categorías ya cargadas
         Product product = ProductMapper.toEntity(productRequest, categories);
@@ -60,21 +60,23 @@ public class ProductService {
 
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
     Product product = getProductById(id);
-    if (product.getName().equals(productRequest.name())) {
-            if (PRODUCT_REPOSITORY.existsByName(productRequest.name())) { throw new IllegalArgumentException("There is already a product named " + productRequest.name());
+
+    String name = productRequest.name().trim();
+    if (!product.getName().equalsIgnoreCase(name)) {
+            if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(name)) { throw new IllegalArgumentException("There is already a product named " + name);
     }}
-    product.setName(productRequest.name());
+    product.setName(name);
     if (productRequest.price() != null) {
         product.setPrice(productRequest.price());
     }
     if (productRequest.imageUrl() != null) {
-        product.setImageUrl(productRequest.imageUrl());
+        product.setImageUrl(productRequest.imageUrl().trim());
     }
     if (productRequest.featured() != null) {
         product.setFeatured(productRequest.featured());
     }
 
-    List<Category> categories = new ArrayList<>(productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList());
+    List<Category> categories = new ArrayList<>(productRequest.categoryNames().stream().map(categoryName -> CATEGORY_SERVICE.getCategoryByName(categoryName)).toList());
 
     product.setCategories(categories);
 
