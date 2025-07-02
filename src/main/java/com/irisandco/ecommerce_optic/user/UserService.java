@@ -1,5 +1,7 @@
 package com.irisandco.ecommerce_optic.user;
 
+import com.irisandco.ecommerce_optic.exception.EntityAlreadyExistsException;
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +19,7 @@ public class UserService {
     }
 
     public User getUserById(Long id){
-        return USER_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return USER_REPOSITORY.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), "Id", id.toString()));
     }
 
     public UserResponse getUserResponseById(Long id){
@@ -27,7 +29,7 @@ public class UserService {
 
     public UserResponse saveUser(UserRequest userRequest){
         if (USER_REPOSITORY.existsByUsername(userRequest.username())) {
-            throw new IllegalArgumentException("Username is not available, please choose another one");
+            throw new EntityAlreadyExistsException(User.class.getSimpleName(), "username", userRequest.username());
         }
         User user = UserMapper.toEntity(userRequest);
         return UserMapper.toDto(USER_REPOSITORY.save(user));
@@ -37,7 +39,7 @@ public class UserService {
         User user = getUserById(id);
         if(user.getUsername() != userRequest.username()){
             if (USER_REPOSITORY.existsByUsername(userRequest.username())){
-                throw new IllegalArgumentException("Username is not available, please choose another one");
+                throw new EntityAlreadyExistsException(User.class.getSimpleName(), "username", userRequest.username());
             }
         }
 
