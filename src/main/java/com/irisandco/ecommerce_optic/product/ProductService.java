@@ -40,7 +40,7 @@ public class ProductService {
         }
 
         //Obtener categorías por sus nombres
-        List<Category> categories = new ArrayList<>(productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList());
+        List<Category> categories = productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList();
 
         // Convertir el DTO a entidad con las categorías ya cargadas
         Product product = ProductMapper.toEntity(productRequest, categories);
@@ -61,7 +61,7 @@ public class ProductService {
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
     Product product = getProductById(id);
     String name = productRequest.name().trim();
-    if (product.getName() != name) {
+    if (!product.getName().equalsIgnoreCase(name)) {
             if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(name)) { throw new IllegalArgumentException("There is already a product named " + name);
     }}
     product.setName(name);
@@ -69,7 +69,7 @@ public class ProductService {
         product.setPrice(productRequest.price());
     }
     if (productRequest.imageUrl() != null) {
-        product.setImageUrl(productRequest.imageUrl());
+        product.setImageUrl(productRequest.imageUrl().trim());
     }
     if (productRequest.featured() != null) {
         product.setFeatured(productRequest.featured());
