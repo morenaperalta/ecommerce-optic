@@ -15,11 +15,11 @@ public class Item {
     @Column(name="quantity", table="items", nullable = false)
     private Integer quantity;
 
-    @ManyToOne(targetEntity = Product.class)
+    @ManyToOne
     @JoinColumn(name="product_id", nullable = false)
     private Product product;
 
-    @ManyToOne(targetEntity = Cart.class)
+    @ManyToOne
     @JoinColumn(name="cart_id", nullable = false)
     private Cart cart;
 

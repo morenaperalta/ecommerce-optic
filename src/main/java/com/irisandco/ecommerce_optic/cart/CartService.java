@@ -10,6 +10,8 @@ import com.irisandco.ecommerce_optic.user.User;
 import com.irisandco.ecommerce_optic.user.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -49,10 +51,10 @@ public class CartService {
         return CART_REPOSITORY.save(cart);
     }
 
-    public void addItemToCart(Long userId, Long productId, CartRequest cartRequest){
+    public List<String> addItemToCart(Long userId, Long productId, CartRequest cartRequest){
         Cart cart = getCartOrCreateByUserId(userId);
         Product product = PRODUCT_SERVICE.getProductById(productId);
-        int quantity = (cartRequest.quantity() != null) ? cartRequest.quantity() : 1;
+        int quantity = (cartRequest != null && cartRequest.quantity() != null) ? cartRequest.quantity() : 1;
 
         cart.getItems().stream()
                 .filter(item -> Objects.equals(product.getId(), item.getProduct().getId()))
@@ -61,15 +63,16 @@ public class CartService {
                         item -> ITEM_SERVICE.updateItem(item, quantity),
                         () -> {
                             Item newItem = new Item(quantity, product, cart);
-                            ITEM_SERVICE.createItem(newItem);
+                            cart.addItem(ITEM_SERVICE.createItem(newItem));
                         }
                 );
 
         updateCartPrice(cart);
         CartMapper.toDto(CART_REPOSITORY.save(cart));
+        return Arrays.asList(product.getName(), Integer.toString(quantity));
     }
 
-    public void removeItemFromCart(Long userId, Long productId) {
+    public String removeItemFromCart(Long userId, Long productId) {
         Cart cart = getCartOrCreateByUserId(userId);
         Product product = PRODUCT_SERVICE.getProductById(productId);
         cart.getItems().stream()
@@ -86,14 +89,14 @@ public class CartService {
 
             updateCartPrice(cart);
             CartMapper.toDto(CART_REPOSITORY.save(cart));
+            return product.getName();
     }
 
-    private void updateCartPrice(Cart cartToUpdate){
-        Cart cart = getCartByUserId(cartToUpdate.getUser().getId());
+    private void updateCartPrice(Cart cart){
         double totalPrice = cart.getItems().stream()
                 .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
                 .sum();
-        cartToUpdate.setTotalPrice(totalPrice);
+        cart.setTotalPrice(totalPrice);
     }
 
 }

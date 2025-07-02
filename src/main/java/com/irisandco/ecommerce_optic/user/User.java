@@ -19,7 +19,8 @@ public class User {
     @Column(name = "password", table="users", nullable=false, length = 50)
     private String password;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(targetEntity = Cart.class, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id", referencedColumnName = "id", unique = true, nullable = false)
     private Cart cart;
 
     public User() {
@@ -68,5 +69,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public void addCart(Cart cart) {
+        cart.setUser(this);
+        this.cart = cart;
     }
 }

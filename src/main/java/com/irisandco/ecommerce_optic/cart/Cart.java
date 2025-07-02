@@ -15,11 +15,10 @@ public class Cart {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(targetEntity = User.class)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, nullable = false)
+    @OneToOne(mappedBy = "cart")
     private User user;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Item> items = new ArrayList<>();
 
     @Column(name = "totalPrice", table ="carts")
@@ -57,5 +56,10 @@ public class Cart {
 
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public void addItem(Item item) {
+        item.setCart(this);
+        this.items.add(item);
     }
 }
