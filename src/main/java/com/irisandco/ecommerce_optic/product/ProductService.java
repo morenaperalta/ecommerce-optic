@@ -87,6 +87,44 @@ public class ProductService {
 
     return ProductMapper.toDto(savedProduct);
     }
+
+    //Para filtrar
+    public List<ProductResponse> filterProducts(String name, String categoryName, Double minPrice, Double maxPrice) {
+        if (name != null && !name.isBlank()) {
+            return filterByName(name);
+        }
+
+        if (categoryName != null && !categoryName.isBlank()) {
+            return filterByCategory(categoryName);
+        }
+
+        if (minPrice != null) {
+            return filterByMinPrice(minPrice);
+        }
+
+        if (maxPrice != null) {
+            return filterByMaxPrice(maxPrice);
+        }
+
+        // Si no hay filtros, devuelve todos
+        return getAllProducts();
+    }
+
+    public List<ProductResponse> filterByName(String name) {
+        return PRODUCT_REPOSITORY.findProductByNameIgnoreCase(name).stream().map(product -> ProductMapper.toDto(product)).toList();
+    }
+
+    public List<ProductResponse> filterByCategory(String categoryName) {
+        return PRODUCT_REPOSITORY.findByCategories_NameIgnoreCase(categoryName).stream().map(product -> ProductMapper.toDto(product)).toList();
+    }
+
+    private List<ProductResponse> filterByMinPrice(Double minPrice) {
+        return PRODUCT_REPOSITORY.findByPriceGreaterThanEqual(minPrice).stream().map(product -> ProductMapper.toDto(product)).toList();
+    }
+
+    private List<ProductResponse> filterByMaxPrice(Double maxPrice) {
+        return PRODUCT_REPOSITORY.findByPriceLessThanEqual(maxPrice).stream().map(product -> ProductMapper.toDto(product)).toList();
+    }
     }
 
 
