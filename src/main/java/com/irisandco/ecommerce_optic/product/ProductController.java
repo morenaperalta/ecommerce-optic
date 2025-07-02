@@ -44,4 +44,19 @@ public class ProductController {
         PRODUCT_SERVICE.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    //Para filtrar
+    @GetMapping("/filter")
+    public ResponseEntity<List<ProductResponse>> filterProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        List<ProductResponse> products = PRODUCT_SERVICE.filterProducts(name, categoryName, minPrice, maxPrice);
+        if (products.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
 }
