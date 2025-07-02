@@ -1,6 +1,8 @@
 package com.irisandco.ecommerce_optic.product;
 
 import com.irisandco.ecommerce_optic.category.*;
+import com.irisandco.ecommerce_optic.exception.EntityAlreadyExistsException;
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ public class ProductService {
         }
 
     public Product getProductById(Long id) {
-        return PRODUCT_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        return PRODUCT_REPOSITORY.findById(id).orElseThrow(() -> new EntityNotFoundException(Product.class.getSimpleName(), "Id", id.toString()));
     }
 
     public ProductResponse getProductResponseById(Long id) {
@@ -35,8 +37,8 @@ public class ProductService {
     }
 
     public ProductResponse createProduct (ProductRequest productRequest) {
-        if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(productRequest.name())) {
-            new IllegalArgumentException("There is already a product named " + productRequest.name());
+        if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(productRequest.name())) {throw
+            new EntityAlreadyExistsException(Product.class.getSimpleName(), "name", productRequest.name());
         }
 
         //Obtener categorías por sus nombres
@@ -63,7 +65,7 @@ public class ProductService {
 
     String name = productRequest.name().trim();
     if (!product.getName().equalsIgnoreCase(name)) {
-            if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(name)) { throw new IllegalArgumentException("There is already a product named " + name);
+            if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(name)) { throw new EntityAlreadyExistsException(Product.class.getSimpleName(), "name", productRequest.name());
     }}
     product.setName(name);
     if (productRequest.price() != null) {
