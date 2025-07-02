@@ -1,5 +1,7 @@
 package com.irisandco.ecommerce_optic.cart;
 
+import com.irisandco.ecommerce_optic.exception.EntityAlreadyExistsException;
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import com.irisandco.ecommerce_optic.item.Item;
 import com.irisandco.ecommerce_optic.item.ItemService;
 import com.irisandco.ecommerce_optic.product.Product;
@@ -25,7 +27,7 @@ public class CartService {
     }
 
     public Cart getCartByUserId(Long id){
-        return CART_REPOSITORY.findCartByUserId(id).orElseThrow(() -> new IllegalArgumentException("Cart not found for this user ID"));
+        return CART_REPOSITORY.findCartByUserId(id).orElseThrow(() -> new EntityNotFoundException(Cart.class.getSimpleName(), "userId", id.toString()));
     }
 
     public CartResponse getCartResponseByUserId(Long id){
@@ -40,7 +42,7 @@ public class CartService {
     public Cart createCart(Long userId){
         User user = USER_SERVICE.getUserById(userId);
         if (CART_REPOSITORY.existsByUserId(userId)) {
-            throw new IllegalArgumentException("There is already a cart for this user " + user.getUsername());
+            throw new EntityAlreadyExistsException(Cart.class.getSimpleName(), "userId", userId.toString());
         }
         Cart cart = new Cart();
         cart.setUser(user);
@@ -78,7 +80,7 @@ public class CartService {
                         ITEM_SERVICE.deleteItemById(itemToRemove.getId());
                         },
                         () -> {
-                            throw new IllegalArgumentException("Product not found in this cart");
+                            throw new EntityNotFoundException(Item.class.getSimpleName(),"product",product.getName(),"this cart");
                         }
                 );
 
