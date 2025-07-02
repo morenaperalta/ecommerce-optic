@@ -115,7 +115,7 @@ public class ProductService {
     }
 
     public List<ProductResponse> filterByCategory(String categoryName) {
-        return PRODUCT_REPOSITORY.findByCategoryNameIgnoreCase(categoryName).stream().map(product -> ProductMapper.toDto(product)).toList();
+        return PRODUCT_REPOSITORY.findByCategories_NameIgnoreCase(categoryName).stream().map(product -> ProductMapper.toDto(product)).toList();
     }
 
     private List<ProductResponse> filterByMinPrice(Double minPrice) {
