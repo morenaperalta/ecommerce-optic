@@ -35,7 +35,7 @@ public class ProductService {
     }
 
     public ProductResponse createProduct (ProductRequest productRequest) {
-        if (PRODUCT_REPOSITORY.existsByName(productRequest.name())) {
+        if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(productRequest.name())) {
             new IllegalArgumentException("There is already a product named " + productRequest.name());
         }
 
@@ -60,10 +60,11 @@ public class ProductService {
 
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
     Product product = getProductById(id);
-    if (product.getName() != productRequest.name()) {
-            if (PRODUCT_REPOSITORY.existsByName(productRequest.name())) { throw new IllegalArgumentException("There is already a product named " + productRequest.name());
+    String name = productRequest.name().trim();
+    if (product.getName() != name) {
+            if (PRODUCT_REPOSITORY.existsByNameIgnoreCase(name)) { throw new IllegalArgumentException("There is already a product named " + name);
     }}
-    product.setName(productRequest.name());
+    product.setName(name);
     if (productRequest.price() != null) {
         product.setPrice(productRequest.price());
     }
@@ -74,7 +75,7 @@ public class ProductService {
         product.setFeatured(productRequest.featured());
     }
 
-    List<Category> categories = new ArrayList<>(productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList());
+    List<Category> categories = new ArrayList<>(productRequest.categoryNames().stream().map(categoryName -> CATEGORY_SERVICE.getCategoryByName(categoryName)).toList());
 
     product.setCategories(categories);
 

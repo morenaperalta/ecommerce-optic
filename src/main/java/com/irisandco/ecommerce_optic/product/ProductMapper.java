@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ProductMapper {
     public static Product toEntity(ProductRequest productRequest, List<Category> categories) {
-        return new Product(productRequest.name(), productRequest.price(), productRequest.imageUrl(), productRequest.featured(), categories);
+        return new Product(productRequest.name().trim(), productRequest.price(), productRequest.imageUrl().trim(), productRequest.featured(), categories);
     }
 
     public static ProductResponse toDto(Product product) {
