@@ -10,6 +10,8 @@ import com.irisandco.ecommerce_optic.user.User;
 import com.irisandco.ecommerce_optic.user.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -49,7 +51,7 @@ public class CartService {
         return CART_REPOSITORY.save(cart);
     }
 
-    public void addItemToCart(Long userId, Long productId, CartRequest cartRequest){
+    public List<String> addItemToCart(Long userId, Long productId, CartRequest cartRequest){
         Cart cart = getCartOrCreateByUserId(userId);
         Product product = PRODUCT_SERVICE.getProductById(productId);
         int quantity = (cartRequest.quantity() != null) ? cartRequest.quantity() : 1;
@@ -67,9 +69,10 @@ public class CartService {
 
         updateCartPrice(cart);
         CartMapper.toDto(CART_REPOSITORY.save(cart));
+        return Arrays.asList(product.getName(), Integer.toString(quantity));
     }
 
-    public void removeItemFromCart(Long userId, Long productId) {
+    public String removeItemFromCart(Long userId, Long productId) {
         Cart cart = getCartOrCreateByUserId(userId);
         Product product = PRODUCT_SERVICE.getProductById(productId);
         cart.getItems().stream()
@@ -86,6 +89,7 @@ public class CartService {
 
             updateCartPrice(cart);
             CartMapper.toDto(CART_REPOSITORY.save(cart));
+            return product.getName();
     }
 
     private void updateCartPrice(Cart cartToUpdate){

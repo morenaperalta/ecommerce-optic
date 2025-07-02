@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
@@ -15,20 +17,21 @@ public class CartController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<CartResponse> getCartByUserId(@PathVariable Long userId){
-        return ResponseEntity.ok(CART_SERVICE.getCartResponseByUserId(userId));
+        CartResponse cartResponse = CART_SERVICE.getCartResponseByUserId(userId);
+        return ResponseEntity.ok(cartResponse);
     }
 
     @PostMapping("/{userId}/add/{productId}")
     public ResponseEntity<Object> addItemToCart(@PathVariable Long userId, @PathVariable Long productId, @Valid @RequestBody CartRequest cartRequest){
-        CART_SERVICE.addItemToCart(userId, productId, cartRequest);
-        return ResponseEntity.ok().body("New product added to cart");
+        List<String> productName = CART_SERVICE.addItemToCart(userId, productId, cartRequest);
+        return ResponseEntity.ok().body("New product added to cart: \"" + productName.get(0) + "\" " + productName.get(1) + " units");
 
     }
 
     @DeleteMapping("/{userId}/remove/{productId}")
     public ResponseEntity<Object> removeItemFromCart(@PathVariable Long userId, @PathVariable Long productId){
-        CART_SERVICE.removeItemFromCart(userId, productId);
-        return ResponseEntity.ok().body("Product deleted from cart");
+        String productName =  CART_SERVICE.removeItemFromCart(userId, productId);
+        return ResponseEntity.ok().body("Product \"" + productName + "\" deleted from cart");
 
     }
 }
