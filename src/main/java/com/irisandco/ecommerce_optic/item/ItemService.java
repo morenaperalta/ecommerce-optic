@@ -1,5 +1,6 @@
 package com.irisandco.ecommerce_optic.item;
 
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,7 +12,7 @@ public class ItemService {
     }
 
     public Item getItemById(Long id){
-        return ITEM_REPOSITORY.findById(id).orElseThrow(() -> new IllegalArgumentException("Item not found by Id"));
+        return ITEM_REPOSITORY.findById(id).orElseThrow(() -> new EntityNotFoundException(Item.class.getSimpleName(), "id", id.toString()));
     }
 
     public Item createItem(Item item){
