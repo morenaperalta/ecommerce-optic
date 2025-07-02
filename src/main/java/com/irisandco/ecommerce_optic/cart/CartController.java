@@ -22,7 +22,8 @@ public class CartController {
     }
 
     @PostMapping("/{userId}/add/{productId}")
-    public ResponseEntity<Object> addItemToCart(@PathVariable Long userId, @PathVariable Long productId, @Valid @RequestBody CartRequest cartRequest){
+    public ResponseEntity<Object> addItemToCart(@PathVariable Long userId, @PathVariable Long productId,
+                                                @Valid @RequestBody(required = false) CartRequest cartRequest){
         List<String> productName = CART_SERVICE.addItemToCart(userId, productId, cartRequest);
         return ResponseEntity.ok().body("New product added to cart: \"" + productName.get(0) + "\" " + productName.get(1) + " units");
 

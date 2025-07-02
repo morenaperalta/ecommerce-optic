@@ -54,7 +54,7 @@ public class CartService {
     public List<String> addItemToCart(Long userId, Long productId, CartRequest cartRequest){
         Cart cart = getCartOrCreateByUserId(userId);
         Product product = PRODUCT_SERVICE.getProductById(productId);
-        int quantity = (cartRequest.quantity() != null) ? cartRequest.quantity() : 1;
+        int quantity = (cartRequest != null && cartRequest.quantity() != null) ? cartRequest.quantity() : 1;
 
         cart.getItems().stream()
                 .filter(item -> Objects.equals(product.getId(), item.getProduct().getId()))
@@ -63,7 +63,7 @@ public class CartService {
                         item -> ITEM_SERVICE.updateItem(item, quantity),
                         () -> {
                             Item newItem = new Item(quantity, product, cart);
-                            ITEM_SERVICE.createItem(newItem);
+                            cart.addItem(ITEM_SERVICE.createItem(newItem));
                         }
                 );
 
@@ -92,12 +92,11 @@ public class CartService {
             return product.getName();
     }
 
-    private void updateCartPrice(Cart cartToUpdate){
-        Cart cart = getCartByUserId(cartToUpdate.getUser().getId());
+    private void updateCartPrice(Cart cart){
         double totalPrice = cart.getItems().stream()
                 .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
                 .sum();
-        cartToUpdate.setTotalPrice(totalPrice);
+        cart.setTotalPrice(totalPrice);
     }
 
 }

@@ -57,4 +57,9 @@ public class Cart {
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
+
+    public void addItem(Item item) {
+        item.setCart(this);
+        this.items.add(item);
+    }
 }

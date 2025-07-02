@@ -75,7 +75,7 @@ public class User {
         this.cart = cart;
     }
 
-    public void addCart(Cart cart) {//Explicitly specify  relationship
+    public void addCart(Cart cart) {
         cart.setUser(this);
         this.cart = cart;
     }
