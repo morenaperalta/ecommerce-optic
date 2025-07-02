@@ -53,12 +53,7 @@ public class CategoryService {
 
     private List<CategoryResponse> listToDto(List<Category> categories) {
         return categories.stream()
-                .map( (category) -> {
-                                List <ProductResponseShort> productResponseShort = category.getProducts().stream()
-                                                    .map(ProductMapper::toDtoShort)
-                                                    .toList();
-                                return CategoryMapper.toDto(category, productResponseShort);
-                })
+                .map( CategoryMapper::toDto)
                 .toList();
     }
 }

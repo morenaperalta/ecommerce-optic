@@ -26,10 +26,16 @@ public class Item {
     public Item() {
     }
 
+    public Item newItem(int quantity, Product product, Cart cart) {
+        Item item = new Item(quantity, product, cart);
+        cart.getItems().add(item);
+        return item;
+    }
+
     public Item(int quantity, Product product, Cart cart) {
         this.quantity = quantity;
         this.product = product;
-        this.cart = cart;
+        this.cart = cart;;
     }
 
     public Item(Long id, int quantity, Product product, Cart cart) {
