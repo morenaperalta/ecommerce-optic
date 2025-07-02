@@ -1,10 +1,13 @@
 package com.irisandco.ecommerce_optic.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
+@JsonPropertyOrder({"timestamp", "status", "error", "message", "path"})
 public class ErrorResponse {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime timestamp;
@@ -12,6 +15,7 @@ public class ErrorResponse {
     private final String error;
     private final String message;
     private final String path;
+
 
     public ErrorResponse(HttpStatus status, String message, String path) {
         this.timestamp = LocalDateTime.now();
