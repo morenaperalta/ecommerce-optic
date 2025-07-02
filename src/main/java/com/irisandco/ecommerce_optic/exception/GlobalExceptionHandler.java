@@ -33,4 +33,13 @@ public class GlobalExceptionHandler {
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleEntityAlreadyExistsException(EntityAlreadyExistsException exception) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        ErrorResponse errorResponse = new ErrorResponse(status, exception.getMessage(), Arrays.toString(exception.getStackTrace()));
+
+        return new ResponseEntity<>(errorResponse,status);
+    }
 }
