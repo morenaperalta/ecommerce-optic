@@ -1,5 +1,6 @@
 package com.irisandco.ecommerce_optic.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,10 +16,10 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException exception) {
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException exception, HttpServletRequest req) {
         HttpStatus status = HttpStatus.NOT_FOUND;
-
-        ErrorResponse errorResponse = new ErrorResponse(status, exception.getMessage(), Arrays.toString(exception.getStackTrace()));
+        String controllerPath = String.valueOf(req.getRequestURL());
+        ErrorResponse errorResponse = new ErrorResponse(status, exception.getMessage(), controllerPath);
 
         return new ResponseEntity<>(errorResponse,status);
     }
@@ -26,6 +27,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();
+
         exception.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
@@ -35,10 +37,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleEntityAlreadyExistsException(EntityAlreadyExistsException exception) {
+    public ResponseEntity<ErrorResponse> handleEntityAlreadyExistsException(EntityAlreadyExistsException exception, HttpServletRequest req) {
         HttpStatus status = HttpStatus.CONFLICT;
-
-        ErrorResponse errorResponse = new ErrorResponse(status, exception.getMessage(), Arrays.toString(exception.getStackTrace()));
+        String controllerPath = String.valueOf(req.getRequestURL());
+        ErrorResponse errorResponse = new ErrorResponse(status, exception.getMessage(), controllerPath);
 
         return new ResponseEntity<>(errorResponse,status);
     }
