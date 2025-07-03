@@ -1,5 +1,6 @@
 package com.irisandco.ecommerce_optic.category;
 
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import com.irisandco.ecommerce_optic.product.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,18 +37,14 @@ public class CategoryServiceTest {
 
     @Test
     void getAllCategories_returnsListOfCategoriesResponse() {
-        // Mock de categoría
-
 
         when(categoryRepository.findAll()).thenReturn(List.of(categoryEntity));
 
-        // Llamada al método real
         List<CategoryResponse> result = categoryService.getAllCategories();
 
-        // Asserts básicos
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Category 1", result.get(0).name());
+        assertEquals("Category 1", result.getFirst().name());
     }
 
     @Test
@@ -55,12 +52,21 @@ public class CategoryServiceTest {
 
         when(categoryRepository.findById(id)).thenReturn(Optional.of(categoryEntity));
 
-        // Llamada al método real
         Category result = categoryService.getCategoryById(id);
 
-        // Asserts básicos
         assertNotNull(result);
         assertEquals("Category 1", result.getName());
-        assertEquals("New product", result.getProducts().get(0).getName());
+        assertEquals("New product", result.getProducts().getFirst().getName());
+    }
+
+    @Test
+    void getCategoryByIdNotExisting_returnsException() {
+        id = 20L;
+        String expectedMessage = "Category with id 20 was not found";
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> categoryService.getCategoryById(id));
+        assertEquals(expectedMessage, exception.getMessage());
+        System.out.println(expectedMessage);
+
     }
 }
