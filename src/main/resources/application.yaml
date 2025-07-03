@@ -1,4 +1,7 @@
 spring:
+  output:
+      ansi:
+          enabled: ALWAYS
   application:
     name: ecommerce-optic
   config:
@@ -34,11 +37,11 @@ server:
   #error: include-message: always
   
   # Logging Configuration
-  logging:
-    level:
-      org:
-        hibernate:
-          SQL: DEBUG
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
 #        springframework: DEBUG
 #      com:
 #        zaxxer:
