@@ -24,11 +24,15 @@ public class UserServiceTest {
 
     private User userEntity;
     private UserResponse userResponse;
+    private UserRequest userRequest;
+    private User userMapped;
 
     @BeforeEach
     void setUp() {
         userEntity = new User("Morena", "more@gmail.com", "12345");
         userResponse = new UserResponse(1L, "Morena","more@gmail.com");
+        userRequest = new UserRequest( "Morena", "more@gmail.com", "1234");
+        userMapped = UserMapper.toEntity(userRequest);
     }
 
     @Test
@@ -83,9 +87,26 @@ public class UserServiceTest {
         UserResponse result = userService.getUserResponseById(id);
 
         assertNotNull(result);
+        assertEquals(UserResponse.class, result.getClass());
         assertEquals("Morena", result.username());
         assertEquals("more@gmail.com", result.email());
 
         verify(userRepository, times(1)).findById(id);
+    }
+
+    @Test
+    void saveUser_whenCorrectRequest_returnsUserResponse() {
+        when(userRepository.existsByUsername(userRequest.username())).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenReturn(userEntity);
+
+        UserResponse result = userService.saveUser(userRequest);
+
+        assertNotNull(result);
+        assertEquals(UserResponse.class, result.getClass());
+        assertEquals("Morena", result.username());
+        assertEquals("more@gmail.com", result.email());
+
+        verify(userRepository, times(1)).existsByUsername(userRequest.username());
+        verify(userRepository, times(1)).save(any(User.class));
     }
 }
