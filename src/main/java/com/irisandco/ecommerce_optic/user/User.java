@@ -20,7 +20,7 @@ public class User {
     private String password;
 
     @OneToOne(targetEntity = Cart.class, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", referencedColumnName = "id", unique = true, nullable = false)
+    @JoinColumn(name = "cart_id", referencedColumnName = "id", unique = true)
     private Cart cart;
 
     public User() {
@@ -42,10 +42,6 @@ public class User {
     public Long getId() {
         return id;
     }
-
-   // public void setId(Long id) {
-   //     this.id = id;
-   // }
 
     public String getUsername() {
         return username;
