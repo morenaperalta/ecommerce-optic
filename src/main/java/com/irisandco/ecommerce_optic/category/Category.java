@@ -22,6 +22,12 @@ public class Category {
 
     public Category(){}
 
+    public Category(Long id, String name, List<Product> products) {
+        this.id = id;
+        this.name = name;
+        this.products = products;
+    }
+
     public Category(String name) {
         this.name = name;
     }
