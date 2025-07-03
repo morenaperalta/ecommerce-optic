@@ -1,6 +1,5 @@
 package com.irisandco.ecommerce_optic.user;
 
-import com.irisandco.ecommerce_optic.cart.Cart;
 import com.irisandco.ecommerce_optic.exception.EntityAlreadyExistsException;
 import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -32,22 +31,21 @@ public class UserService {
         if (USER_REPOSITORY.existsByUsername(userRequest.username())) {
             throw new EntityAlreadyExistsException(User.class.getSimpleName(), "username", userRequest.username());
         }
-        Cart cart = new Cart();
         User user = UserMapper.toEntity(userRequest);
-        user.addCart(cart);
         return UserMapper.toDto(USER_REPOSITORY.save(user));
     }
 
     public UserResponse updateUser(Long id, UserRequest userRequest){
         User user = getUserById(id);
-        if(user.getUsername() != userRequest.username()){
-            if (USER_REPOSITORY.existsByUsername(userRequest.username())){
-                throw new EntityAlreadyExistsException(User.class.getSimpleName(), "username", userRequest.username());
+        String username = userRequest.username().trim();
+        if(user.getUsername().equals(username)){
+            if (USER_REPOSITORY.existsByUsername(username)){
+                throw new EntityAlreadyExistsException(User.class.getSimpleName(), "username", username);
             }
         }
 
-        user.setUsername(userRequest.username());
-        user.setEmail(userRequest.email());
+        user.setUsername(username);
+        user.setEmail(userRequest.email().trim());
         user.setPassword(userRequest.password());
 
         return UserMapper.toDto(USER_REPOSITORY.save(user));
