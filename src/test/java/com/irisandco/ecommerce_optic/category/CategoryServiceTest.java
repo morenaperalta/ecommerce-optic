@@ -69,4 +69,28 @@ public class CategoryServiceTest {
         System.out.println(expectedMessage);
 
     }
+
+    @Test
+    void getCategoryByNameExisting_returnsCategory() {
+        String name = " category 1 ";
+
+        when(categoryRepository.findCategoryByNameIgnoreCase(name)).thenReturn(Optional.of(categoryEntity));
+
+        Category result = categoryService.getCategoryByName(name);
+
+        assertNotNull(result);
+        assertEquals("Category 1", result.getName());
+        assertEquals("New product", result.getProducts().getFirst().getName());
+    }
+
+    @Test
+    void getCategoryByNameNotExisting_returnsException() {
+        String name = "category 2";
+        String expectedMessage = "Category with name category 2 was not found";
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> categoryService.getCategoryByName(name));
+        assertEquals(expectedMessage, exception.getMessage());
+        System.out.println(expectedMessage);
+
+    }
 }
