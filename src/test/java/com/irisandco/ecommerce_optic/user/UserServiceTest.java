@@ -1,14 +1,15 @@
 package com.irisandco.ecommerce_optic.user;
 
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
@@ -16,12 +17,14 @@ public class UserServiceTest {
     private UserRepository userRepository;
     private UserService userService;
     private User userEntity;
+    private UserResponse userResponse;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         userService = new UserService(userRepository);
         userEntity = new User("Morena", "more@gmail.com", "12345");
+        userResponse = new UserResponse(1L, "Morena","more@gmail.com");
     }
 
     @Test
@@ -39,6 +42,32 @@ public class UserServiceTest {
 
     @Test
     void getUserById_returnsUserEntity() {
-        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(userEntity));
+
+        Long id = 1L;
+        when(userRepository.findById(id)).thenReturn(Optional.of(userEntity));
+
+        User result = userService.getUserById(id);
+
+        assertNotNull(result);
+        assertEquals(User.class, result.getClass());
+        assertEquals("Morena", result.getUsername());
+        assertEquals("more@gmail.com", result.getEmail());
+    }
+
+    @Test
+    void getUserById_returnsEntityNotFoundException() {
+
+        Long id = 2L;
+        String messageExpected = "User with Id " + id + " was not found";
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        Exception result = assertThrows(EntityNotFoundException.class, () -> userService.getUserById(id));
+
+        assertEquals(messageExpected,result.getMessage());
+    }
+
+    @Test
+    void getUserResponseById_returnsUserResponse() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
     }
 }
