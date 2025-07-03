@@ -3,32 +3,36 @@ package com.irisandco.ecommerce_optic.user;
 import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
+
+    @InjectMocks
     private UserService userService;
+
     private User userEntity;
     private UserResponse userResponse;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        userService = new UserService(userRepository);
         userEntity = new User("Morena", "more@gmail.com", "12345");
         userResponse = new UserResponse(1L, "Morena","more@gmail.com");
     }
 
     @Test
-    void getAllUsers_returnsListOfUsersResponse() {
+    void getAllUsers_whenUsersExist_returnsListOfUsersResponse() {
 
         when(userRepository.findAll()).thenReturn(List.of(userEntity));
 
@@ -36,15 +40,17 @@ public class UserServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Morena", result.get(0).username());
-        assertEquals("more@gmail.com", result.get(0).email());
+        assertEquals("Morena", result.getFirst().username());
+        assertEquals("more@gmail.com", result.getFirst().email());
+
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
-    void getUserById_returnsUserEntity() {
+    void getUserById_whenUserExists_returnsUserEntity() {
 
         Long id = 1L;
-        when(userRepository.findById(id)).thenReturn(Optional.of(userEntity));
+        when(userRepository.findById(eq(id))).thenReturn(Optional.of(userEntity));
 
         User result = userService.getUserById(id);
 
@@ -52,22 +58,34 @@ public class UserServiceTest {
         assertEquals(User.class, result.getClass());
         assertEquals("Morena", result.getUsername());
         assertEquals("more@gmail.com", result.getEmail());
+
+        verify(userRepository, times(1)).findById(id);
     }
 
     @Test
-    void getUserById_returnsEntityNotFoundException() {
+    void getUserById_whenUserDoesNotExist_throwsEntityNotFoundException() {
 
         Long id = 2L;
         String messageExpected = "User with Id " + id + " was not found";
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        when(userRepository.findById(eq(id))).thenReturn(Optional.empty());
 
         Exception result = assertThrows(EntityNotFoundException.class, () -> userService.getUserById(id));
 
         assertEquals(messageExpected,result.getMessage());
+        verify(userRepository, times(1)).findById(id);
     }
 
     @Test
-    void getUserResponseById_returnsUserResponse() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
+    void getUserResponseById_whenUserExists_returnsUserResponse() {
+        Long id = 1L;
+        when(userRepository.findById(eq(id))).thenReturn(Optional.of(userEntity));
+
+        UserResponse result = userService.getUserResponseById(id);
+
+        assertNotNull(result);
+        assertEquals("Morena", result.username());
+        assertEquals("more@gmail.com", result.email());
+
+        verify(userRepository, times(1)).findById(id);
     }
 }
