@@ -32,6 +32,11 @@ public class Category {
         this.name = name;
     }
 
+    public Category(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
@@ -46,5 +51,9 @@ public class Category {
 
     public List<Product> getProducts() {
         return products;
+    }
+
+    public void addProducts(Product product) {
+        this.products.add(product);
     }
 }
