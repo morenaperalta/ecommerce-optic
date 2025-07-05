@@ -1,6 +1,9 @@
 package com.irisandco.ecommerce_optic.product;
 
 import com.irisandco.ecommerce_optic.category.CategoryService;
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
+import com.irisandco.ecommerce_optic.user.User;
+import com.irisandco.ecommerce_optic.user.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,7 +66,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void grtProductById_whenUserExists_returnUserEntity() {
+    void grtProductById_whenProductExists_returnProductEntity() {
 
         Long id = 1L;
         when(productRepository.findById(eq(id))).thenReturn(Optional.of(productEntity));
@@ -81,5 +84,57 @@ public class ProductServiceTest {
         verify(productRepository, times(1)).findById(id);
     }
 
+    @Test
+    void getProductById_whenProductDoesNotExist_throwsEntityNotFoundException() {
+        Long id = 2L;
+        String messageExpected = "Product with Id " + id + " was not found";
+
+        when(productRepository.findById(eq(id))).thenReturn(Optional.empty());
+
+        Exception result = assertThrows(EntityNotFoundException.class, () -> productService.getProductById(id));
+
+        assertEquals(messageExpected,result.getMessage());
+        verify(productRepository, times(1)).findById(id);
+    }
+
+    @Test
+    void getProductResponseById_whenProductExists_returnsProductResponse() {
+        Long id = 1L;
+        when(productRepository.findById(eq(id))).thenReturn(Optional.of(productEntity));
+
+        ProductResponse result = productService.getProductResponseById(id);
+
+        assertNotNull(result);
+        assertEquals(ProductResponse.class, result.getClass());
+        assertEquals(1L, result.id());
+        assertEquals("Sunglasses", result.name());
+        assertEquals(100.0, result.price());
+        assertEquals("image.jpg", result.imageUrl());
+        assertEquals(true, result.featured());
+        assertEquals(List.of(), result.categories());
+
+        verify(productRepository, times(1)).findById(id);
+    }
+
+    @Test
+    void saveProduct_whenCorrectRequest_returnsProductResponse() {
+        when(productRepository.existsByNameIgnoreCase(productRequest.name())).thenReturn(false);
+
+        when(productRepository.save(any(Product.class))).thenReturn(productEntity);
+
+        ProductResponse result = productService.createProduct(productRequest);
+
+        assertNotNull(result);
+        assertEquals(ProductResponse.class, result.getClass());
+        assertEquals("Sunglasses", result.name());
+        assertEquals(100.0, result.price());
+        assertEquals("image.jpg", result.imageUrl());
+        assertEquals(true, result.featured());
+        assertEquals(List.of(), result.categories());
+
+        verify(productRepository, times(1)).existsByNameIgnoreCase(productRequest.name());
+
+        verify(productRepository, times(1)).save(any(Product.class));
+    }
 
 }
