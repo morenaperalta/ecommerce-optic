@@ -147,8 +147,8 @@ Currently, the API doesn't require authentication, but it's recommended to imple
 |--------|-------------------|---------------------|----------------------------------------------------------------------------------------------------|
 | `GET`    | `/api/users`       | List all users      | -                                                                                                  |
 | `GET`    | `/api/users/{id}`  | Get user by ID      | -                                                                                                  |
-| `POST`   | `/api/users`       | Register new user   | `{ "username": "yourUsername", "email": "your_email@mail.com", "password": "your_password12345" }` |
-| `PUT`    | `/api/users/{id}`  | Update user         | `{ "username": "NewName", "email": "new@mail.com" }`                                               |
+| `POST`   | `/api/users`       | Register new user   | `{ "username": "YourUsername", "email": "your_email@mail.com", "password": "your_password12345" }` |
+| `PUT`    | `/api/users/{id}`  | Update user         | `{ "username": "NewUserame", "email": "new@mail.com" }`                                            |
 | `DELETE` | `/api/users/{id}`  | Delete user         | -                                                                                                  |
 
 ### 📦 Products Management
