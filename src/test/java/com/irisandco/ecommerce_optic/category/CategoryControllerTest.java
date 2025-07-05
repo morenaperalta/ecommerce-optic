@@ -12,13 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.HashMap;
@@ -106,31 +103,6 @@ public class CategoryControllerTest {
 
     }
 
-//    @Test
-//    void createCategory_whenCategoryIsRepeated_returnsException() throws Exception{
-//        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-//        EntityAlreadyExistsException exception = new EntityAlreadyExistsException(Category.class.getSimpleName(), "name", categoryRequest.name());
-////        ResponseEntity<ErrorResponse>  responseEntity = globalExceptionHandler.handleEntityAlreadyExistsException(exception, mockHttpServletRequest);
-//
-////        HttpStatus status = HttpStatus.NOT_FOUND;
-////        ErrorResponse errorResponse = new ErrorResponse(status, exception.getMessage(), controllerPath);
-////        ResponseEntity responseEntity = new ResponseEntity<>(errorResponse,status);
-//
-//        given(categoryService.saveCategory(categoryRequest)).willThrow(exception);
-//        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT, exception.getMessage(), "http://localhost/api/categories");
-//        String jsonErrorResponse = objectMapper.writeValueAsString(errorResponse);
-//
-//        mockMvc.perform(post("/api/categories")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(jsonCategoryRequest))
-//                .andExpect(status().isConflict())
-//                .andExpect(result -> assertEquals(result.getResolvedException(), exception))
-//                .andExpect(content().json(jsonErrorResponse));
-////                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-////                .andExpect(jsonPath("$.path").value("http://localhost/api/categories"));
-//
-//    }
-
     @Test
     void createCategory_whenCategoryIsRepeated_returnsConflict() throws Exception {
         // Given
@@ -156,23 +128,10 @@ public class CategoryControllerTest {
     void createCategory_whenCategoryNameIsInvalid_returnsException() throws Exception {
         // Given
         CategoryRequest invalidRequest = new CategoryRequest("C");
-
         String jsonRequest= objectMapper.writeValueAsString(invalidRequest);
-
-        // Create a BindingResult with validation errors
-//        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(invalidRequest, "invalidRequest");
-//        bindingResult.addError(new FieldError("categoryRequest", "name", "Category name must contain min 2 and max 50 characters"));
-//        MethodParameter mockParameter = new MethodParameter(
-//                CategoryController.class.getMethod("createCategory", CategoryRequest.class), 0
-//        );
-//        // Simulate the exception
-//        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(mockParameter, bindingResult);
-
         String message = "Category name must contain min 2 and max 50 characters";
         String expectedJson = new ObjectMapper().writeValueAsString(
-                new HashMap<String, String>() {{
-                    put("name", message);
-                }}
+                new HashMap<String, String>() {{put("name", message);}}
         );
 
         // When & Then
@@ -183,30 +142,5 @@ public class CategoryControllerTest {
                 .andExpect(result -> assertEquals(MethodArgumentNotValidException.class, result.getResolvedException().getClass()))
                 .andExpect(content().json(expectedJson));
     }
-
-
-//
-//    @Test
-//    void createCategory_whenCategoryNameIsInvalid_returnsException() throws Exception {
-//        // Given
-//        CategoryRequest invalidRequest = new CategoryRequest("");
-//        String json = objectMapper.writeValueAsString(invalidRequest);
-//
-//        String string = "Category name must contain min 2 and max 50 characters";
-////        String jsonResponse = objectMapper.writeValueAsString(string);
-////        JSONObject jsonObject = new JSONObject(string);
-//
-//        String message = "Category name must contain min 2 and max 50 characters";
-//
-//        String jsonResponse = new ObjectMapper().writeValueAsString(
-//                new JSONObject().put("message", message)
-//        );
-//        // When & Then
-//        mockMvc.perform(post("/api/categories")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(json))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().json(jsonResponse));
-//    }
 
 }
