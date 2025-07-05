@@ -19,6 +19,7 @@ A robust backend REST API for an e-commerce platform specializing in optical pro
 - [🌐 API Endpoints](#-api-endpoints)
 - [🔧 Technologies](#-technologies)
 - [📊 Architecture](#-architecture)
+- [🧪 Tests](#-tests)
 - [🤝 Contributing](#-contributing)
 - [📄 Team Members](#-team-members)
 
@@ -142,13 +143,13 @@ Currently, the API doesn't require authentication, but it's recommended to imple
 
 ### 👥 Users Management
 
-| Method | Endpoint           | Description         | Request Body                                      |
-|--------|-------------------|---------------------|--------------------------------------------------|
-| `GET`    | `/api/users`       | List all users      | -                                                |
-| `GET`    | `/api/users/{id}`  | Get user by ID      | -                                                |
-| `POST`   | `/api/users`       | Register new user   | `{ "username": "Morena", "email": "more@gmail.com", "password": "12345" }` |
-| `PUT`    | `/api/users/{id}`  | Update user         | `{ "username": "NewName", "email": "new@mail.com" }` |
-| `DELETE` | `/api/users/{id}`  | Delete user         | -                                                |
+| Method | Endpoint           | Description         | Request Body                                                                                       |
+|--------|-------------------|---------------------|----------------------------------------------------------------------------------------------------|
+| `GET`    | `/api/users`       | List all users      | -                                                                                                  |
+| `GET`    | `/api/users/{id}`  | Get user by ID      | -                                                                                                  |
+| `POST`   | `/api/users`       | Register new user   | `{ "username": "yourUsername", "email": "your_email@mail.com", "password": "your_password12345" }` |
+| `PUT`    | `/api/users/{id}`  | Update user         | `{ "username": "NewName", "email": "new@mail.com" }`                                               |
+| `DELETE` | `/api/users/{id}`  | Delete user         | -                                                                                                  |
 
 ### 📦 Products Management
 
@@ -265,8 +266,20 @@ The application uses the following main entities:
 
 #### UML Class Diagram
 ![UML Diagram](docs/images/UML_diagram.png)
+---
 
+## 🧪 Tests
 
+This project includes unit and integration tests to ensure the quality and correct functionality of the API.
+
+- Currently, services and controllers for **Product**, **User**, and **Category** have been tested.
+- The tests are located in `src/test/java/com/irisandco/ecommerce_optic/`.
+- **JUnit 5** and **Mockito** are used for writing and running tests.
+- To run all tests:
+
+```bash
+./mvnw test
+```
 ---
 
 ## 🤝 Contributing
