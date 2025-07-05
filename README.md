@@ -1,4 +1,4 @@
-# 🔍 Ecommerce Optic API
+# 👓 Iris & Co. - Ecommerce Optic API
 
 A robust backend REST API for an e-commerce platform specializing in optical products. Built with modern Java technologies including Spring Boot, Maven, and following RESTful best practices.
 
@@ -121,6 +121,9 @@ logging:
 
 ## 📚 API Documentation
 
+### Flowchart
+![Flowchart](docs/images/Flowchart.png)
+
 ### Postman Collection
 Access our comprehensive API collection:
 [🔗 **Join Postman Team**](https://app.getpostman.com/join-team?invite_code=4798026b0adda5d6fdc40d822ca65f16f5320d13dc339788d34090b78c893bc5&target_code=2ab1c896448c173edf9c6616f91c416f)
@@ -214,6 +217,8 @@ Currently, the API doesn't require authentication, but it's recommended to imple
 ### Project Structure
 ```
 ecommerce-optic/
+├── docs/
+│   └── images/
 ├── src/
 │   ├── main/
 │   │   ├── java/
@@ -247,13 +252,20 @@ ecommerce-optic/
 └── README.md
 ```
 
-### Database Schema
+### Database Design
 The application uses the following main entities:
 - **User**: User account information
 - **Product**: Optical products catalog
 - **Category**: Product categories
 - **Cart**: Shopping cart sessions
 - **Item**: Cart items with quantities
+
+#### ER Diagram, Logical and Physical Model
+![ER Diagram](docs/images/ER_diagram.png)
+
+#### UML Class Diagram
+![UML Diagram](docs/images/UML_diagram.png)
+
 
 ---
 
