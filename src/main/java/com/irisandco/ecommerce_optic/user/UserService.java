@@ -38,7 +38,7 @@ public class UserService {
     public UserResponse updateUser(Long id, UserRequest userRequest){
         User user = getUserById(id);
         String username = userRequest.username().trim();
-        if(user.getUsername().equals(username)){
+        if(!user.getUsername().equals(username)){
             if (USER_REPOSITORY.existsByUsername(username)){
                 throw new EntityAlreadyExistsException(User.class.getSimpleName(), "username", username);
             }
