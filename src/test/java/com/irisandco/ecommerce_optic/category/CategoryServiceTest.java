@@ -4,6 +4,7 @@ import com.irisandco.ecommerce_optic.exception.EntityAlreadyExistsException;
 import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import com.irisandco.ecommerce_optic.product.Product;
 import com.irisandco.ecommerce_optic.product.ProductResponseShort;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,11 @@ public class CategoryServiceTest {
         categoryEntity.addProducts(product);
         ProductResponseShort productResponseShort = new ProductResponseShort(1L, "New product", 10.0, true);
         categoryResponse = new CategoryResponse(1L, "Category 1", List.of(productResponseShort));
+    }
+    
+    @AfterEach
+    void afterTest(){
+        verifyNoMoreInteractions(categoryRepository);
     }
 
     @Test
@@ -105,7 +111,6 @@ public class CategoryServiceTest {
         assertEquals(categoryResponseShort, result);
         verify(categoryRepository, times(1)).existsByNameIgnoreCase(any(String.class));
         verify(categoryRepository, times(1)).save(any(Category.class));
-
     }
 
     @Test
@@ -161,5 +166,25 @@ public class CategoryServiceTest {
         verify(categoryRepository, times(1)).findById(eq(id));
     }
 
+    @Test
+    void deleteCategory_whenCategoryExists_returnsVoid() {
+        when(categoryRepository.findById(eq(id))).thenReturn(Optional.of(categoryEntityRepo));
+        doNothing().when(categoryRepository).deleteById(id);
 
+        categoryService.deleteCategory(id);
+        
+        verify(categoryRepository, times(1)).findById(id);
+        verify(categoryRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void deleteCategory_whenCategoryDoesNotExist_returnsException() {
+        Long id = 20L;
+        Exception expectedException = new EntityNotFoundException(Category.class.getSimpleName(), "id", id.toString());
+        when(categoryRepository.findById(eq(id))).thenThrow(new EntityNotFoundException(Category.class.getSimpleName(), "id", id.toString()));
+
+        Exception resultException = assertThrows(EntityNotFoundException.class, () -> categoryService.deleteCategory(id));
+        assertEquals(expectedException.getMessage(), resultException.getMessage());
+        verify(categoryRepository, times(1)).findById(id);
+    }
 }
