@@ -18,19 +18,15 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-//Activa Mockito en JUnit 5
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
 
-    //Creo un falso repositorio, que no se conecta a la base de datos.
     @Mock
     private ProductRepository productRepository;
 
-    //Creo un servicio de categorías falso. Se usa cuando el ProductService necesita cargar categorías.
     @Mock
     private CategoryService categoryService;
 
-    //Crea un ProductService de verdad, pero le inyecta los dos mocks anteriores.
     @InjectMocks
     private ProductService productService;
 
