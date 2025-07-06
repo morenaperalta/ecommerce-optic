@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -92,7 +93,7 @@ public class CategoryControllerTest {
     void createCategory_whenCategoryIsNew_returnsCategory() throws Exception{
         // Given
         String expectedJson = objectMapper.writeValueAsString(new CategoryResponseShort(1L, "Category 1"));
-        given(categoryService.saveCategory(categoryRequest)).willReturn(categoryResponseShort);
+        given(categoryService.saveCategory(any(CategoryRequest.class))).willReturn(categoryResponseShort);
 
         // When & Then
         mockMvc.perform(post("/api/categories")
@@ -136,6 +137,64 @@ public class CategoryControllerTest {
 
         // When & Then
         mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertEquals(MethodArgumentNotValidException.class, result.getResolvedException().getClass()))
+                .andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    void updateCategory_whenCategoryIsNew_returnsCategory() throws Exception{
+        // Given
+        Long id = 1L;
+        CategoryResponseShort categoryResponseUpdatedShort = new CategoryResponseShort(1L, "Category 1 updated");
+        String expectedJson = objectMapper.writeValueAsString(new CategoryResponseShort(1L, "Category 1 updated"));
+        given(categoryService.updateCategory(any(Long.class), any(CategoryRequest.class))).willReturn(categoryResponseUpdatedShort);
+
+        // When & Then
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonCategoryRequest))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson));
+
+    }
+
+
+    @Test
+    void updateCategory_whenCategoryIsRepeated_returnsConflict() throws Exception {
+        // Given
+        String jsonCategoryRequest = objectMapper.writeValueAsString(categoryRequest);
+        EntityAlreadyExistsException exception = new EntityAlreadyExistsException(Category.class.getSimpleName(), "name", categoryRequest.name());
+        String expectedJson = objectMapper.writeValueAsString(new ErrorResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                "http://localhost/api/categories/1"
+        ));
+        given(categoryService.updateCategory(any(Long.class), any(CategoryRequest.class))).willThrow(exception);
+
+        // When & Then
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonCategoryRequest))
+                .andExpect(status().isConflict())
+                .andExpect(result -> assertEquals(exception, result.getResolvedException()))
+                .andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    void updateCategory_whenCategoryNameIsInvalid_returnsException() throws Exception {
+        // Given
+        CategoryRequest invalidRequest = new CategoryRequest("C");
+        String jsonRequest= objectMapper.writeValueAsString(invalidRequest);
+        String message = "Category name must contain min 2 and max 50 characters";
+        String expectedJson = new ObjectMapper().writeValueAsString(
+                new HashMap<String, String>() {{put("name", message);}}
+        );
+
+        // When & Then
+        mockMvc.perform(put("/api/categories/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest())
