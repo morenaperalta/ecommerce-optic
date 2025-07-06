@@ -3,8 +3,6 @@ package com.irisandco.ecommerce_optic.product;
 
 import com.irisandco.ecommerce_optic.category.CategoryService;
 import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
-import com.irisandco.ecommerce_optic.user.User;
-import com.irisandco.ecommerce_optic.user.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
