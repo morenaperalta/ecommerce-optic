@@ -91,7 +91,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void saveCategory_returnsCategoryResponse(){
+    void saveCategory_whenCategoryIsNew_returnsCategoryResponse(){
         // Given
         CategoryRequest categoryRequest = new CategoryRequest("Category to Save");
         Category categoryEntityWithId = new Category(10L, "Category to Save", List.of());
@@ -109,11 +109,9 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void saveCategoryExistingName_returnsCategoryResponse(){
+    void saveCategory_whenCategoryAlreadyExists_returnsCategoryResponse(){
         // Given
         CategoryRequest categoryRequest = new CategoryRequest("Category 1");
-        Category categoryEntityWithoutId = new Category( "Category to Save");
-        Category categoryEntityWithId = new Category(10L, "Category to Save", List.of());
         EntityAlreadyExistsException expectedException = new EntityAlreadyExistsException(Category.class.getSimpleName(), "name", categoryRequest.name());
 
         // When
@@ -124,4 +122,44 @@ public class CategoryServiceTest {
         assertEquals(expectedException.getMessage(), exception.getMessage());
         verify(categoryRepository, times(1)).existsByNameIgnoreCase(any(String.class));
     }
+
+    @Test
+    void updateCategory_whenCategoryExists_returnsCategoryResponse(){
+        // Given
+        Long id = 10L;
+        CategoryRequest categoryRequest = new CategoryRequest("Category updated");
+        Category categoryEntityWithId = new Category(10L, "Category", List.of());
+        Category categoryEntityWithIdUpdated = new Category(10L, "Category updated", List.of());
+        CategoryResponseShort categoryResponseShort = new CategoryResponseShort(10L, "Category updated");
+
+        // When
+        when(categoryRepository.save(any(Category.class))).thenReturn(categoryEntityWithIdUpdated);
+        when(categoryRepository.findById(eq(id))).thenReturn(Optional.of(categoryEntityWithId));
+        CategoryResponseShort result = categoryService.updateCategory(id, categoryRequest);
+
+        // Assert
+        assertEquals(categoryResponseShort, result);
+        verify(categoryRepository, times(1)).existsByNameIgnoreCase(any(String.class));
+        verify(categoryRepository, times(1)).save(any(Category.class));
+    }
+
+    @Test
+    void updateCategory_whenCategoryDoesNotExist_returnsException() {
+        // Given
+        Long id = 10L;
+        EntityNotFoundException expectedExceptions = new EntityNotFoundException(Category.class.getSimpleName(), "id", id.toString());
+        CategoryRequest categoryRequest = new CategoryRequest("Category updated");
+
+        // When
+        when(categoryRepository.findById(eq(id))).thenThrow(expectedExceptions);
+
+        // Then
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {categoryService.updateCategory(id, categoryRequest);});
+
+        // Assert
+        assertEquals(expectedExceptions.getMessage(), exception.getMessage());
+        verify(categoryRepository, times(1)).findById(eq(id));
+    }
+
+
 }
