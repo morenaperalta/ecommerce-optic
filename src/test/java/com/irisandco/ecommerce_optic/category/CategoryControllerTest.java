@@ -4,9 +4,11 @@ package com.irisandco.ecommerce_optic.category;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.irisandco.ecommerce_optic.exception.EntityAlreadyExistsException;
+import com.irisandco.ecommerce_optic.exception.EntityNotFoundException;
 import com.irisandco.ecommerce_optic.exception.ErrorResponse;
 import com.irisandco.ecommerce_optic.exception.GlobalExceptionHandler;
 import com.irisandco.ecommerce_optic.product.ProductResponseShort;
+import com.mysql.cj.protocol.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +26,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -194,12 +196,46 @@ public class CategoryControllerTest {
         );
 
         // When & Then
-        mockMvc.perform(put("/api/categories/1")
+        mockMvc.perform(put("/api/categories/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertEquals(MethodArgumentNotValidException.class, result.getResolvedException().getClass()))
                 .andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    void deleteCategory_whenCategoryExists_returnsCategory() throws Exception{
+        // Given
+        Long id = 1L;
+        CategoryResponseShort categoryResponseUpdatedShort = new CategoryResponseShort(1L, "Category 1 updated");
+        doNothing().when(categoryService).deleteCategory(any(Long.class));
+
+        // When & Then
+        mockMvc.perform(delete("/api/categories/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Category deleted successfully"));
+
+    }
+
+    @Test
+    void deleteCategory_whenCategoryDoesNotExist_returnsException() throws Exception{
+        // Given
+        Long id = 1L;
+        EntityNotFoundException exception = new EntityNotFoundException(Category.class.getSimpleName(), "id", id.toString());
+        doThrow(new EntityNotFoundException(Category.class.getSimpleName(), "id", id.toString())).when(categoryService).deleteCategory(any(Long.class));
+        String expectedJson = objectMapper.writeValueAsString(new ErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage(),
+                "http://localhost/api/categories/1"
+        ));
+
+        // When & Then
+        mockMvc.perform(delete("/api/categories/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertEquals(result.getResolvedException().getMessage(), exception.getMessage()))
+                .andExpect(content().json(expectedJson.trim()));
+
     }
 
 }
