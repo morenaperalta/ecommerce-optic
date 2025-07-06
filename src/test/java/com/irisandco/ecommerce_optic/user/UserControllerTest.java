@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class UserControllerTest {
 
     private UserResponse user1;
     private UserResponse user2;
+    private UserRequest user2Request;
     private List<UserResponse> userResponses;
 
     @BeforeEach
@@ -42,6 +44,7 @@ public class UserControllerTest {
        userResponses = new ArrayList<>();
        user1 = new UserResponse(1L, "Judit", "judit@gmail.com");
        user2 = new UserResponse(2L, "Iris", "iris@hotmail.com");
+       user2Request = new UserRequest("Iris", "iris@hotmail.com", "123456789012");
        userResponses.add(user1);
        userResponses.add(user2);
     }
@@ -74,5 +77,18 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email").value("judit@gmail.com"));
     }
 
+
+    @Test
+    void saveUser_whenCorrectRequest_returnsUserResponse() throws Exception{
+        given(userService.saveUser(Mockito.any(UserRequest.class))).willReturn(user2);
+
+        String json = objectMapper.writeValueAsString(user2Request);
+
+        mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.username").value("Iris"))
+                .andExpect(jsonPath("$.email").value("iris@hotmail.com"));
+    }
 
 }
