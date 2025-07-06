@@ -1,6 +1,7 @@
 package com.irisandco.ecommerce_optic.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.irisandco.ecommerce_optic.category.CategoryResponseShort;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,5 +108,4 @@ public class ProductControllerTest {
                     .content(json))
                 .andExpect(status().isBadRequest());
     }
-
 }

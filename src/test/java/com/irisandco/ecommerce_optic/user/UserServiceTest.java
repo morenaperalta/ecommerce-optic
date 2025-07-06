@@ -32,7 +32,7 @@ public class UserServiceTest {
         userEntity = new User("Morena", "more@gmail.com", "12345");
         userResponse = new UserResponse(1L, "Morena","more@gmail.com");
         userRequest = new UserRequest( "Morena", "more@gmail.com", "1234");
-        userMapped = UserMapper.toEntity(userRequest);
+        userMapped = new User("Morena", "more@gmail.com", "12345");
     }
 
     @Test
