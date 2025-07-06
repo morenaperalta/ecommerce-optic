@@ -45,7 +45,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldGetAllUsersSuccessfully() throws Exception{
+    void getAllUsers_whenUsersExist_returnsListOfUsersResponse() throws Exception{
         given(userService.getAllUsers()).willReturn(userResponses);
 
         mockMvc.perform(get("/api/users").accept(MediaType.APPLICATION_JSON))
