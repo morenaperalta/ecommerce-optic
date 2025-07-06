@@ -12,8 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ public class UserControllerTest {
 
 
     @Test
-    void saveUser_whenCorrectRequest_returnsUserResponse() throws Exception{
+    void createUser_whenCorrectRequest_returnsUserResponse() throws Exception{
         given(userService.saveUser(Mockito.any(UserRequest.class))).willReturn(user2);
 
         String json = objectMapper.writeValueAsString(user2Request);
@@ -92,7 +91,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void saveUser_whenInvalidRequest_returnsBadRequest() throws Exception{
+    void createUser_whenInvalidRequest_returnsBadRequest() throws Exception{
         UserRequest invalidRequest = new UserRequest("","","1234");
 
         String json = objectMapper.writeValueAsString(invalidRequest);
@@ -101,4 +100,20 @@ public class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void updateUser_whenCorrectRequest_returnsUserResponse() throws Exception{
+        Long userId = 1L;
+        UserRequest userUpdatedRequest = new UserRequest("Judit", "judit_c@gmail.com", "123456789012");
+        UserResponse userUpdatedResponse = new UserResponse(userId, "Judit", "judit_c@gmail.com");
+
+        given(userService.updateUser(userId, userUpdatedRequest)).willReturn(userUpdatedResponse);
+
+        String json = objectMapper.writeValueAsString(userUpdatedRequest);
+
+        mockMvc.perform(put("/api/users/{id}",userId).contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.username").value("Judit"))
+                .andExpect(jsonPath("$.email").value("judit_c@gmail.com"));
+    }
 }
