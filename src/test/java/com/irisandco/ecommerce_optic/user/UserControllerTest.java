@@ -91,4 +91,14 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email").value("iris@hotmail.com"));
     }
 
+    @Test
+    void saveUser_whenInvalidRequest_returnsBadRequest() throws Exception{
+        UserRequest invalidRequest = new UserRequest("","","1234");
+
+        String json = objectMapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isBadRequest());
+    }
+
 }
