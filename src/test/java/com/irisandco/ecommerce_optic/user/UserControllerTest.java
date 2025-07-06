@@ -33,6 +33,7 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private Long userId;
     private UserResponse user1;
     private UserResponse user2;
     private UserRequest user2Request;
@@ -40,6 +41,7 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+       userId = 1L;
        userResponses = new ArrayList<>();
        user1 = new UserResponse(1L, "Judit", "judit@gmail.com");
        user2 = new UserResponse(2L, "Iris", "iris@hotmail.com");
@@ -66,7 +68,6 @@ public class UserControllerTest {
 
     @Test
     void getUserById_whenUserExists_returnsUserResponse() throws Exception{
-        Long userId = 1L;
         given(userService.getUserResponseById(userId)).willReturn(user1);
 
         mockMvc.perform(get("/api/users/{id}", userId).accept(MediaType.APPLICATION_JSON))
@@ -102,7 +103,6 @@ public class UserControllerTest {
 
     @Test
     void updateUser_whenCorrectRequest_returnsUserResponse() throws Exception{
-        Long userId = 1L;
         UserRequest userUpdatedRequest = new UserRequest("Judit", "judit_c@gmail.com", "123456789012");
         UserResponse userUpdatedResponse = new UserResponse(userId, "Judit", "judit_c@gmail.com");
 
@@ -115,5 +115,12 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.username").value("Judit"))
                 .andExpect(jsonPath("$.email").value("judit_c@gmail.com"));
+    }
+
+    @Test
+    void deleteUser_whenIdExists_returnsNoContent() throws Exception{
+
+        mockMvc.perform(delete("/api/users/{id}", userId))
+                .andExpect(status().isNoContent());
     }
 }
