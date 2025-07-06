@@ -95,4 +95,17 @@ public class ProductControllerTest {
 
     }
 
+    @Test
+    void shouldReturnBadRequestWhenProductNameIsInvalid() throws Exception {
+        //Given
+        ProductRequest invalidRequest = new ProductRequest("", 0.0, "", false, List.of());
+        String json = objectMapper.writeValueAsString(invalidRequest);
+
+        //When & Then
+        mockMvc.perform(post("/api/products")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
 }
