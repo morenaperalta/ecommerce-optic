@@ -5,6 +5,7 @@ import com.irisandco.ecommerce_optic.category.CategoryResponseShort;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,6 +72,27 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].categories[0].name").value("Category 1"));
     }
 
+    @Test
+    void shouldCreateProductSuccessfully() throws Exception {
+        //Given
+        ProductRequest request = new ProductRequest("Product 3", 99.9, "image3.jpg", false, List.of("Category 1", "Category 2"));
+        ProductResponse savedResponse = new ProductResponse(3L, "Product 3", 99.9, "image3.jpg", false, List.of(
+                new CategoryResponseShort(1L, "Category 1"),
+                new CategoryResponseShort(2L, "Category 2")));
 
+        given(productService.createProduct(Mockito.any(ProductRequest.class))).willReturn(savedResponse);
+
+        String json = objectMapper.writeValueAsString(request);
+
+        //When & Then
+        mockMvc.perform(post("/api/products")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Product 3"))
+                .andExpect(jsonPath("$.categories", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$.categories[0].name").value("Category 1"));
+
+    }
 
 }
