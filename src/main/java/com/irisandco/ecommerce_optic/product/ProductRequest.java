@@ -1,9 +1,6 @@
 package com.irisandco.ecommerce_optic.product;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ public record ProductRequest(
         @Positive(message = "Price must be positive")
         @DecimalMax(value = "1000.00", message = "Price must be lower than 1000")
         Double price,
+        @Pattern(regexp = "^(https?:\\/\\/)?([\\w\\-]+\\.)+[\\w\\-]+(\\/\\S*)?$", message = "URL must be a valid one")
         String imageUrl,
         Boolean featured,
         List<String> categoryNames
