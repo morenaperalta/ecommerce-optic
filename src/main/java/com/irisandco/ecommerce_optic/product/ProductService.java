@@ -41,21 +41,16 @@ public class ProductService {
             new EntityAlreadyExistsException(Product.class.getSimpleName(), "name", productRequest.name());
         }
 
-        //Obtener categorías por sus nombres
         List<Category> categories = productRequest.categoryNames().stream().map(name -> CATEGORY_SERVICE.getCategoryByName(name)).toList();
 
-        // Convertir el DTO a entidad con las categorías ya cargadas
         Product product = ProductMapper.toEntity(productRequest, categories);
 
-        // Guardar producto
         Product savedProduct = PRODUCT_REPOSITORY.save(product);
 
-        // Devolver el DTO con las categorías incluidas
         return ProductMapper.toDto(savedProduct);
     }
 
     public void deleteProduct(Long id) {
-        //Verify if the id product exist or throw an exception
         Product product = getProductById(id);
         PRODUCT_REPOSITORY.deleteById(id);
     }
@@ -82,13 +77,11 @@ public class ProductService {
 
     product.setCategories(categories);
 
-    // Guardar product
     Product savedProduct = PRODUCT_REPOSITORY.save(product);
 
     return ProductMapper.toDto(savedProduct);
     }
 
-    //Para filtrar
     public List<ProductResponse> filterProducts(String name, String categoryName, Double minPrice, Double maxPrice) {
         if (name != null && !name.isBlank()) {
             return filterByName(name);
@@ -106,7 +99,6 @@ public class ProductService {
             return filterByMaxPrice(maxPrice);
         }
 
-        // Si no hay filtros, devuelve todos
         return getAllProducts();
     }
 
