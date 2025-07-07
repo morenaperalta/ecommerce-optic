@@ -45,7 +45,6 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //Para filtrar
     @GetMapping("/filter")
     public ResponseEntity<List<ProductResponse>> filterProducts(
             @RequestParam(required = false) String name,
