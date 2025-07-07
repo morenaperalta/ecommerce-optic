@@ -23,7 +23,7 @@ public class CategoryService {
     }
 
     public Category getCategoryByName(String name){
-        return CATEGORY_REPOSITORY.findCategoryByNameIgnoreCase(name).orElseThrow(() -> new EntityNotFoundException(Category.class.getSimpleName(), "name", name));
+        return CATEGORY_REPOSITORY.findByNameIgnoreCase(name).orElseThrow(() -> new EntityNotFoundException(Category.class.getSimpleName(), "name", name));
     }
 
     public CategoryResponseShort saveCategory(CategoryRequest categoryRequest){

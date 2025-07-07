@@ -78,22 +78,22 @@ public class CategoryServiceTest {
     @Test
     void getCategoryByName_whenCategoryExists_returnsCategory() {
         String name ="Category 1";
-        when(categoryRepository.findCategoryByNameIgnoreCase(eq(name))).thenReturn(Optional.of(categoryEntity));
+        when(categoryRepository.findByNameIgnoreCase(eq(name))).thenReturn(Optional.of(categoryEntity));
         Category result = categoryService.getCategoryByName(name);
 
         assertEquals(categoryEntityRepo, result);
-        verify(categoryRepository, times(1)).findCategoryByNameIgnoreCase(name);
+        verify(categoryRepository, times(1)).findByNameIgnoreCase(name);
     }
 
     @Test
     void getCategoryByName_whenCategoryDoesNotExist_returnsException() {
         String name = "category 2";
         String expectedMessage = "Category with name " + name + " was not found";
-        when(categoryRepository.findCategoryByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
+        when(categoryRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> categoryService.getCategoryByName(name));
         assertEquals(expectedMessage, exception.getMessage());
-        verify(categoryRepository, times(1)).findCategoryByNameIgnoreCase(name);
+        verify(categoryRepository, times(1)).findByNameIgnoreCase(name);
     }
 
     @Test
