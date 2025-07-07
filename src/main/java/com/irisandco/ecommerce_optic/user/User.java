@@ -19,8 +19,7 @@ public class User {
     @Column(name = "password", table="users", nullable=false, length = 50)
     private String password;
 
-    @OneToOne(targetEntity = Cart.class, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", referencedColumnName = "id", unique = true)
+    @OneToOne(mappedBy = "user")
     private Cart cart;
 
     public User() {
