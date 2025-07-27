@@ -324,7 +324,7 @@ We welcome contributions! Please follow these steps:
     </td>
     <td align="center">
       <a href="https://github.com/morenaperalta">
-        <img src="https://github.com/More-Pe.png" width="100px;" alt="More-Pe"/>
+        <img src="https://github.com/morenaperalta.png" width="100px;" alt="Morena Peralta"/>
         <br />
         <sub><b>Morena Peralta</b></sub>
       </a>
