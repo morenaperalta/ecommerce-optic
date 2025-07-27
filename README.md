@@ -323,7 +323,7 @@ We welcome contributions! Please follow these steps:
       <sub>Full Stack Developer</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/More-Pe">
+      <a href="https://github.com/morenaperalta">
         <img src="https://github.com/More-Pe.png" width="100px;" alt="More-Pe"/>
         <br />
         <sub><b>Morena Peralta</b></sub>
